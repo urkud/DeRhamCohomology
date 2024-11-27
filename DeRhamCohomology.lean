@@ -1,5 +1,7 @@
 import DeRhamCohomology.AlternatingMap.Curry
 import DeRhamCohomology.ContinuousAlternatingMap.Curry
+import DeRhamCohomology.DifferentialForm
 import DeRhamCohomology.Fin
 import DeRhamCohomology.MultilinearMap.Fin
+import DeRhamCohomology.NormedGroup
 import DeRhamCohomology.Perm

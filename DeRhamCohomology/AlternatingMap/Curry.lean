@@ -49,20 +49,6 @@ theorem neg_one_pow_smul_apply_insertNth (f : M [⋀^Fin (n + 1)]→ₗ[R] N) (x
     rw [Fin.insertNth_succ, f.map_swap _ Fin.lt_succ.ne, ih, Fin.val_succ, Fin.coe_castSucc,
       pow_succ', mul_smul, neg_one_smul]
 
-theorem neg_one_pow_smul_add_of_eq (f : M [⋀^Fin n]→ₗ[R] N) {v : Fin (n + 1) → M}
-    {i j : Fin (n + 1)} (hne : i ≠ j) (heq : v i = v j) :
-    (-1)^i.1 • f (i.removeNth v) + (-1)^j.1 • f (j.removeNth v) = 0 := by
-  wlog hlt : i < j generalizing i j
-
-/-
-  obtain ⟨n, rfl⟩ : ∃ m, m + 1 = n := by
-    cases n
-    · exact absurd (Fin.subsingleton_one.elim i j) hne
-    · exact ⟨_, rfl⟩
--/  
-  
-
-
 /-- Given a function which is linear in the first argument
 and is alternating form in the other `n` arguments,
 build an alternating form in `n + 1` arguments.
@@ -85,14 +71,8 @@ def uncurryFin (f : M →ₗ[R] (M [⋀^Fin n]→ₗ[R] N)) :
       _ = 0 := by
         sorry
 
-  -- toFun x := ∑ i : Fin (n + 1), (-1 : ℤ) ^ i.val • f (x i) (i.removeNth x)
-  -- map_update_add' m j x y := by
-  --   obtain rfl : ‹DecidableEq (Fin (n + 1))› = instDecidableEqFin _ := Subsingleton.elim _ _
-  --   simp only [Fin.sum_univ_succAbove _ j, Function.update_same, map_add, add_apply, smul_add,
-  --     Fin.removeNth_update]
-    
-
-  -- map_update_smul' := _
-  -- map_eq_zero_of_eq' := _
+theorem uncurryFin_apply (f : M →ₗ[R] (M [⋀^Fin n]→ₗ[R] N)) (v : Fin (n + 1) → M) :
+    uncurryFin f v = ∑ i, (-1) ^ i.val • f (v i) (Fin.removeNth i v) := by
+  simp [uncurryFin]
 
 end CommRing

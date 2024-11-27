@@ -5,6 +5,8 @@ Authors: Yury Kudryashov
 -/
 import Mathlib.Analysis.NormedSpace.Alternating.Basic
 import Mathlib.Analysis.NormedSpace.Multilinear.Curry
+import DeRhamCohomology.AlternatingMap.Curry
+import DeRhamCohomology.NormedGroup
 
 noncomputable section
 suppress_compilation
@@ -17,18 +19,23 @@ variable {𝕜 E F : Type*} [NontriviallyNormedField 𝕜]
   [NormedAddCommGroup E] [NormedSpace 𝕜 E]
   [NormedAddCommGroup F] [NormedSpace 𝕜 F]
 
+def uncurryFin {n : ℕ} (f : E →L[𝕜] (E [⋀^Fin n]→L[𝕜] F)) :
+    E [⋀^Fin (n + 1)]→L[𝕜] F :=
+  AlternatingMap.mkContinuous
+    (.uncurryFin <| ContinuousAlternatingMap.toAlternatingMapLinear.comp f.toLinearMap)
+    ((n + 1) * ‖f‖) fun v ↦ calc
+      _ = ‖∑ k, (-1) ^ k.val • f (v k) (k.removeNth v)‖ := by
+        simp [AlternatingMap.uncurryFin_apply]
+      _ ≤ ∑ k, ‖f‖ * ‖v k‖ * ∏ j, ‖v (k.succAbove j)‖ := by
+        refine norm_sum_le_of_le _ fun k _ ↦ ?_
+        rw [norm_neg_one_pow_zsmul]
+        exact (f (v k)).le_of_opNorm_le (f.le_opNorm _) _
+      _ = _ := by
+        simp [mul_assoc, ← Fin.prod_univ_succAbove (‖v ·‖)]
 
-def curryFin {n : ℕ} (f : E [⋀^Fin (n + 1)]→L[𝕜] F) :
-    E →L[𝕜] (E [⋀^Fin n]→L[𝕜] F) :=
-  LinearMap.mkContinuous
-    { toFun := fun x ↦
-      { toContinuousMultilinearMap := f.toContinuousMultilinearMap.curryLeft x
-        map_eq_zero_of_eq' := fun v i j heq hne ↦
-          f.map_eq_zero_of_eq (Fin.cons x v) (i := i.succ) (j := j.succ) (by simpa) (by simpa) }
-      map_add' := _
-      map_smul' := _ }
-    1 fun x ↦ _
-
+theorem uncurryFin_apply {n : ℕ} (f : E →L[𝕜] (E [⋀^Fin n]→L[𝕜] F)) (v : Fin (n + 1) → E) :
+    uncurryFin f v = ∑ k, (-1) ^ k.val • f (v k) (k.removeNth v) :=
+  AlternatingMap.uncurryFin_apply ..
 
 end Curry
 
