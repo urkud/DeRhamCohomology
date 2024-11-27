@@ -5,11 +5,12 @@ defaultTargets = ["DeRhamCohomology"]
 
 [leanOptions]
 pp.unicode.fun = true # pretty-prints `fun a ↦ b`
+autoImplicit = false
 
 [[require]]
 name = "mathlib"
 scope = "leanprover-community"
-
+rev = "YK-normed-alternating"
 
 [[require]]
 name = "checkdecls"
@@ -19,5 +20,6 @@ git = "https://github.com/PatrickMassot/checkdecls.git"
 name = "«doc-gen4»"
 git = "https://github.com/leanprover/doc-gen4"
 rev = "main"
+
 [[lean_lib]]
 name = "DeRhamCohomology"

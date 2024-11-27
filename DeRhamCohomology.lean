@@ -1,3 +1,5 @@
--- This module serves as the root of the `DeRhamCohomology` library.
--- Import modules here that should be built as part of the library.
-import DeRhamCohomology.Basic
+import DeRhamCohomology.AlternatingMap.Curry
+import DeRhamCohomology.ContinuousAlternatingMap.Curry
+import DeRhamCohomology.Fin
+import DeRhamCohomology.MultilinearMap.Fin
+import DeRhamCohomology.Perm
