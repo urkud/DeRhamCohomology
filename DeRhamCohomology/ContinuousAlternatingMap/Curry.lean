@@ -19,6 +19,10 @@ variable {𝕜 E F : Type*} [NontriviallyNormedField 𝕜]
   [NormedAddCommGroup E] [NormedSpace 𝕜 E]
   [NormedAddCommGroup F] [NormedSpace 𝕜 F]
 
+/- `TODO` -/
+def curryFin {n : ℕ} (f : E [⋀^Fin (n + 1)]→L[𝕜] F) :
+    E →L[𝕜] E [⋀^Fin n]→L[𝕜] F := by sorry
+
 def uncurryFin {n : ℕ} (f : E →L[𝕜] (E [⋀^Fin n]→L[𝕜] F)) :
     E [⋀^Fin (n + 1)]→L[𝕜] F :=
   AlternatingMap.mkContinuous
