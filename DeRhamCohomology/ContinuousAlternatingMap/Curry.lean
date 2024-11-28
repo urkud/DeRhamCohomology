@@ -6,7 +6,6 @@ Authors: Yury Kudryashov
 import Mathlib.Analysis.NormedSpace.Alternating.Basic
 import Mathlib.Analysis.NormedSpace.Multilinear.Curry
 import DeRhamCohomology.AlternatingMap.Curry
-import DeRhamCohomology.NormedGroup
 
 noncomputable section
 suppress_compilation
@@ -28,7 +27,7 @@ def uncurryFin {n : ℕ} (f : E →L[𝕜] (E [⋀^Fin n]→L[𝕜] F)) :
         simp [AlternatingMap.uncurryFin_apply]
       _ ≤ ∑ k, ‖f‖ * ‖v k‖ * ∏ j, ‖v (k.succAbove j)‖ := by
         refine norm_sum_le_of_le _ fun k _ ↦ ?_
-        rw [norm_neg_one_pow_zsmul]
+        rw [norm_isUnit_zsmul _ (.pow _ isUnit_one.neg)]
         exact (f (v k)).le_of_opNorm_le (f.le_opNorm _) _
       _ = _ := by
         simp [mul_assoc, ← Fin.prod_univ_succAbove (‖v ·‖)]

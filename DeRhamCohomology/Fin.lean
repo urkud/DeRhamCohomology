@@ -10,12 +10,6 @@ attribute [simp] succAbove_right_inj
 variable {n : ℕ} {α : Fin (n + 1) → Sort*}
 
 @[simp]
-theorem update_insertNth (p : Fin (n + 1)) (x y : α p) (xs : ∀ i, α (p.succAbove i)) :
-    update (p.insertNth x xs) p y = p.insertNth y xs := by
-  ext i
-  cases i using p.succAboveCases <;> simp [succAbove_ne]
-
-@[simp]
 theorem update_insertNth_succAbove (p : Fin (n + 1)) (i : Fin n) (x : α p) (y : α (p.succAbove i))
     (xs : ∀ i, α (p.succAbove i)) :
     update (p.insertNth x xs) (p.succAbove i) y = p.insertNth x (update xs i y) := by
