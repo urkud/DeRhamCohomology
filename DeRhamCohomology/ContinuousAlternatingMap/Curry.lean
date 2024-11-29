@@ -65,13 +65,24 @@ theorem uncurryFin_uncurryFinCLM_comp_of_symmetric {f : E →L[𝕜] E →L[𝕜
     (hf : ∀ x y, f x y = f y x) :
     uncurryFin (uncurryFinCLM.comp f) = 0 := by
   ext v
-  set f : Fin (n + 2) → Fin (n + 1) → F := fun i j ↦
+  set a : Fin (n + 2) → Fin (n + 1) → F := fun i j ↦
     (-1) ^ (i + j : ℕ) • f (v i) (i.removeNth v j) (j.removeNth (i.removeNth v))
-  suffices ∑ ij : Fin (n + 2) × Fin (n + 1), f ij.1 ij.2 = 0 by
-    simpa [f, uncurryFin_apply, Finset.smul_sum, Fintype.sum_prod_type, mul_smul, pow_add]
+  suffices ∑ ij : Fin (n + 2) × Fin (n + 1), a ij.1 ij.2 = 0 by
+    simpa [a, uncurryFin_apply, Finset.smul_sum, Fintype.sum_prod_type, mul_smul, pow_add]
       using this
+  set g : Fin (n + 2) × Fin (n + 1) → Fin (n + 2) × Fin (n + 1) := fun (i, j) ↦
+    (i.succAbove j, j.predAbove i)
+  have hg_invol : g.Involutive := by
+    intro (i, j)
+    simp only [g, Fin.succAbove_succAbove_predAbove, Fin.predAbove_predAbove_succAbove]
+  refine Finset.sum_ninvolution g ?_ (by simp [g, Fin.succAbove_ne]) (by simp) hg_invol
+  intro (i, j)
+  simp only [a]
+  rw [hf (v i), ← Fin.removeNth_removeNth_eq_swap, Fin.removeNth_apply _ (i.succAbove j),
+    Fin.succAbove_succAbove_predAbove, ← eq_neg_iff_add_eq_zero, ← neg_smul, ← neg_one_mul (_ ^ _),
+    ← pow_succ']
+  congr 1
   sorry
-
 
 end Curry
 

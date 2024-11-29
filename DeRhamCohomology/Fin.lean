@@ -7,16 +7,30 @@ namespace Fin
 
 attribute [simp] succAbove_right_inj
 
+theorem succAbove_succAbove_predAbove {n : ℕ} (i : Fin (n + 1)) (j : Fin n) :
+    (i.succAbove j).succAbove (j.predAbove i) = i := by
+  ext
+  simp [succAbove, predAbove, lt_def, apply_dite Fin.val, apply_ite Fin.val]
+  split_ifs <;> omega
+
+theorem predAbove_predAbove_succAbove {n : ℕ} (i : Fin (n + 1)) (j : Fin n) :
+    (j.predAbove i).predAbove (i.succAbove j) = j := by
+  ext
+  simp [succAbove, predAbove, lt_def, apply_dite Fin.val, apply_ite Fin.val]
+  split_ifs <;> omega
+
 theorem succAbove_succAbove_succAbove_predAbove {n : ℕ}
     (i : Fin (n + 2)) (j : Fin (n + 1)) (k : Fin n) :
     (i.succAbove j).succAbove ((j.predAbove i).succAbove k) = i.succAbove (j.succAbove k) := by
-  simp only [succAbove, predAbove]
-  split_ifs
-  all_goals simp only [lt_def, coe_pred, coe_castPred] at *
-  all_goals simp only [lt_def, coe_castSucc, val_succ, Fin.ext_iff] at *
-  all_goals omega
+  ext
+  simp [succAbove, predAbove, lt_def, apply_dite Fin.val, apply_ite Fin.val]
+  split_ifs <;> omega
 
 variable {n : ℕ} {α : Fin (n + 1) → Sort*}
+
+theorem removeNth_apply (f : ∀ i, α i) (i : Fin (n + 1)) (j : Fin n) :
+    i.removeNth f j = f (i.succAbove j) :=
+  rfl
 
 @[simp]
 theorem update_insertNth_succAbove (p : Fin (n + 1)) (i : Fin n) (x : α p) (y : α (p.succAbove i))
