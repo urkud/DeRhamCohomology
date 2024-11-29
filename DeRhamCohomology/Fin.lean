@@ -7,6 +7,15 @@ namespace Fin
 
 attribute [simp] succAbove_right_inj
 
+theorem succAbove_succAbove_succAbove_predAbove {n : ℕ}
+    (i : Fin (n + 2)) (j : Fin (n + 1)) (k : Fin n) :
+    (i.succAbove j).succAbove ((j.predAbove i).succAbove k) = i.succAbove (j.succAbove k) := by
+  simp only [succAbove, predAbove]
+  split_ifs
+  all_goals simp only [lt_def, coe_pred, coe_castPred] at *
+  all_goals simp only [lt_def, coe_castSucc, val_succ, Fin.ext_iff] at *
+  all_goals omega
+
 variable {n : ℕ} {α : Fin (n + 1) → Sort*}
 
 @[simp]
@@ -36,5 +45,20 @@ theorem insertNth_succ {α : Sort*} (p : Fin n) (a : α) (x : Fin n → α) :
     · rw [Equiv.swap_apply_of_ne_of_ne _ (succAbove_ne _ _)]
       · rw [succAbove_succ_eq_succAbove_castSucc hne.symm, insertNth_apply_succAbove]
       · rwa [← succAbove_succ_self, succAbove_right_injective.ne_iff]
+
+theorem removeNth_removeNth_heq_swap {α : Fin (n + 2) → Sort*} (m : ∀ i, α i)
+    (i : Fin (n + 1)) (j : Fin (n + 2)) :
+    HEq (i.removeNth (j.removeNth m)) ((i.predAbove j).removeNth ((j.succAbove i).removeNth m)) := by
+  apply Function.hfunext rfl
+  simp only [heq_iff_eq]
+  rintro k _ rfl
+  unfold removeNth
+  apply congr_arg_heq
+  rw [succAbove_succAbove_succAbove_predAbove]
+
+theorem removeNth_removeNth_eq_swap {α : Sort*} (m : Fin (n + 2) → α)
+    (i : Fin (n + 1)) (j : Fin (n + 2)) :
+    i.removeNth (j.removeNth m) = (i.predAbove j).removeNth ((j.succAbove i).removeNth m) :=
+  heq_iff_eq.mp (removeNth_removeNth_heq_swap m i j)
 
 end Fin
