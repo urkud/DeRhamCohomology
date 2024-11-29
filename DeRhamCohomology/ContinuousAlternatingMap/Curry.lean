@@ -61,6 +61,18 @@ def uncurryFinCLM :
       map_smul' := by exact uncurryFin_smul }
     (n + 1) norm_uncurryFin_le
 
+theorem uncurryFin_uncurryFinCLM_comp_of_symmetric {f : E →L[𝕜] E →L[𝕜] E [⋀^Fin n]→L[𝕜] F}
+    (hf : ∀ x y, f x y = f y x) :
+    uncurryFin (uncurryFinCLM.comp f) = 0 := by
+  ext v
+  set f : Fin (n + 2) → Fin (n + 1) → F := fun i j ↦
+    (-1) ^ (i + j : ℕ) • f (v i) (i.removeNth v j) (j.removeNth (i.removeNth v))
+  suffices ∑ ij : Fin (n + 2) × Fin (n + 1), f ij.1 ij.2 = 0 by
+    simpa [f, uncurryFin_apply, Finset.smul_sum, Fintype.sum_prod_type, mul_smul, pow_add]
+      using this
+  sorry
+
+
 end Curry
 
 end ContinuousAlternatingMap
