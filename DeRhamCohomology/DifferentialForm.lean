@@ -42,4 +42,4 @@ theorem ederiv_ederiv_apply (ω : Ω^n⟮E, F⟯) {x} (h : ContDiffAt ℝ 2 ω x
     uncurryFin_uncurryFinCLM_comp_of_symmetric <| h.isSymmSndFDerivAt le_rfl
 
 theorem ederiv_ederiv (ω : Ω^n⟮E, F⟯) (h : ContDiff ℝ 2 ω) : ederiv (ederiv ω) = 0 :=
-  funext fun x ↦ ederiv_ederiv_apply ω h.contDiffAt
+  funext fun _ ↦ ederiv_ederiv_apply ω h.contDiffAt

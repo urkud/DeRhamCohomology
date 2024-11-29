@@ -6,6 +6,8 @@ Authors: Yury Kudryashov
 import Mathlib.LinearAlgebra.Alternating.Basic
 import DeRhamCohomology.MultilinearMap.Fin
 
+open Function
+
 noncomputable section
 suppress_compilation
 
@@ -49,6 +51,26 @@ theorem neg_one_pow_smul_apply_insertNth (f : M [⋀^Fin (n + 1)]→ₗ[R] N) (x
     rw [Fin.insertNth_succ, f.map_swap _ Fin.lt_succ.ne, ih, Fin.val_succ, Fin.coe_castSucc,
       pow_succ', mul_smul, neg_one_smul]
 
+theorem neg_one_pow_smul_apply_removeNth_add_eq_zero_of_eq
+    (f : M [⋀^Fin n]→ₗ[R] N) {v : Fin (n + 1) → M} {i j : Fin (n + 1)}
+    (hvij : v i = v j) (hij : i ≠ j) :
+    (-1) ^ i.val • f (i.removeNth v) + (-1) ^ j.val • f (j.removeNth v) = 0 := by
+  obtain ⟨m, rfl⟩ : ∃ m, m + 1 = n := by
+    cases n
+    · exact absurd ((Fin.subsingleton_iff_le_one.mpr le_rfl).elim i j) hij
+    · exact ⟨_, rfl⟩
+  rcases Fin.exists_succAbove_eq hij with ⟨i, rfl⟩
+  set w := i.removeNth (j.removeNth v)
+  have hw₁ : i.insertNth (v j) w = j.removeNth v := by
+    rw [← hvij]
+    apply Fin.insertNth_self_removeNth
+  have hw₂ : (i.predAbove j).insertNth (v j) w = (j.succAbove i).removeNth v := by
+    simp only [w]
+    rw [Fin.removeNth_removeNth_eq_swap, Fin.insertNth_removeNth, update_eq_self_iff,
+      Fin.removeNth, Fin.succAbove_succAbove_predAbove]
+  simp only [← hw₁, ← hw₂, neg_one_pow_smul_apply_insertNth, smul_smul, ← pow_add,
+    Fin.neg_one_pow_succAbove_add_predAbove, pow_succ', neg_one_mul, neg_smul, neg_add_cancel]
+
 /-- Given a function which is linear in the first argument
 and is alternating form in the other `n` arguments,
 build an alternating form in `n + 1` arguments.
@@ -69,7 +91,7 @@ def uncurryFin (f : M →ₗ[R] (M [⋀^Fin n]→ₗ[R] N)) :
         rcases Fin.exists_succAbove_eq hkj.symm with ⟨j, rfl⟩
         rw [(f (v k)).map_eq_zero_of_eq _ hvij (ne_of_apply_ne _ hij), smul_zero]
       _ = 0 := by
-        sorry
+        rw [hvij, neg_one_pow_smul_apply_removeNth_add_eq_zero_of_eq] <;> assumption
 
 theorem uncurryFin_apply (f : M →ₗ[R] (M [⋀^Fin n]→ₗ[R] N)) (v : Fin (n + 1) → M) :
     uncurryFin f v = ∑ i, (-1) ^ i.val • f (v i) (Fin.removeNth i v) := by
