@@ -1,5 +1,6 @@
 import Mathlib.Data.Fin.Tuple.Basic
 import Mathlib.Order.Fin.Basic
+import DeRhamCohomology.Int
 
 open Function
 
@@ -25,6 +26,15 @@ theorem succAbove_succAbove_succAbove_predAbove {n : ℕ}
   ext
   simp [succAbove, predAbove, lt_def, apply_dite Fin.val, apply_ite Fin.val]
   split_ifs <;> omega
+
+theorem neg_one_pow_succAbove_add_predAbove {n : ℕ} (i : Fin (n + 2)) (j : Fin (n + 1)) :
+    (-1) ^ (i.succAbove j + j.predAbove i : ℕ) = (-1) ^ (i + j + 1 : ℕ) := by
+  rcases lt_or_le j.castSucc i with hji | hij
+  · have : 0 < (i : ℕ) := (Nat.zero_le j).trans_lt hji
+    rw [succAbove_of_castSucc_lt _ _ hji, coe_castSucc, predAbove_of_castSucc_lt _ _ hji, coe_pred,
+      ← Nat.add_sub_assoc, Int.neg_one_pow_sub_eq_pow_add, Nat.add_comm i] <;> omega
+  · rw [succAbove_of_le_castSucc _ _ hij, val_succ, predAbove_of_le_castSucc _ _ hij, coe_castPred,
+      Nat.add_right_comm, Nat.add_comm i]
 
 variable {n : ℕ} {α : Fin (n + 1) → Sort*}
 

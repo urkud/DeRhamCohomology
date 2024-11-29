@@ -79,10 +79,8 @@ theorem uncurryFin_uncurryFinCLM_comp_of_symmetric {f : E →L[𝕜] E →L[𝕜
   intro (i, j)
   simp only [a]
   rw [hf (v i), ← Fin.removeNth_removeNth_eq_swap, Fin.removeNth_apply _ (i.succAbove j),
-    Fin.succAbove_succAbove_predAbove, ← eq_neg_iff_add_eq_zero, ← neg_smul, ← neg_one_mul (_ ^ _),
-    ← pow_succ']
-  congr 1
-  sorry
+    Fin.succAbove_succAbove_predAbove, Fin.neg_one_pow_succAbove_add_predAbove, pow_succ',
+    neg_one_mul, neg_smul, Fin.removeNth_apply, add_neg_cancel]
 
 end Curry
 
