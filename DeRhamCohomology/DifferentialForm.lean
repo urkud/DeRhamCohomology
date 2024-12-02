@@ -2,11 +2,6 @@ import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 import DeRhamCohomology.ContinuousAlternatingMap.Curry
 import DeRhamCohomology.ContinuousAlternatingMap.FDeriv
 
-/-
-# Differential Forms
-
--/
-
 noncomputable section
 
 open Filter ContinuousAlternatingMap
