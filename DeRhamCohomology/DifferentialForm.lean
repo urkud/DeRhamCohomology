@@ -61,6 +61,19 @@ theorem zero_apply : (0 : Ω^n⟮E, F⟯) v = 0 :=
 instance inhabited : Inhabited (Ω^n⟮E, F⟯) :=
   ⟨0⟩
 
+/- The natural equivalence between differential forms from `E` to `F`
+and maps from `E` to continuous 1-multilinear alternating maps from `E` to `F`. -/
+def ofSubsingleton [Subsingleton (Fin n)] (i : Fin n) :
+    (E → E →L[ℝ] F) ≃ (Ω^n⟮E, F⟯) where
+  toFun f := fun e ↦ ContinuousAlternatingMap.ofSubsingleton ℝ E F i (f e)
+  invFun f := fun e ↦ (ContinuousAlternatingMap.ofSubsingleton ℝ E F i).symm (f e)
+  left_inv _ := rfl
+  right_inv _ := by simp
+
+/- The constant map is a differential form when `Fin n` is empty -/
+def constOfIsEmpty [IsEmpty (Fin n)] (x : F) : Ω^n⟮E, F⟯ :=
+  fun _ ↦ ContinuousAlternatingMap.constOfIsEmpty ℝ E (Fin n) x
+
 /-- Exterior derivative of a differential form. -/
 def ederiv (ω : Ω^n⟮E, F⟯) : Ω^n + 1⟮E, F⟯ :=
   fun x ↦ .uncurryFin (fderiv ℝ ω x)
@@ -115,3 +128,10 @@ theorem pullback_neg (f : E → F) (ω : Ω^k⟮F, G⟯) :
 theorem pullback_smul (f : E → F) (ω : Ω^k⟮F, G⟯) (c : ℝ) :
   c • (pullback f ω) = pullback f (c • ω) :=
     rfl
+
+theorem pullback_ofSubsingleton (f : E → F) (ω : F → F →L[ℝ] G) [Subsingleton (Fin k)] (i : Fin k) :
+  pullback f (ofSubsingleton i ω) = ofSubsingleton i (fun e ↦ (ω (f e)).comp (fderiv ℝ f e)) :=
+    rfl
+
+theorem pullback_constOfIsEmpty (f : E → F) [IsEmpty (Fin k)] (g : G) :
+  pullback f (constOfIsEmpty g) = fun _ ↦ (ContinuousAlternatingMap.constOfIsEmpty ℝ E (Fin k) g) := rfl
