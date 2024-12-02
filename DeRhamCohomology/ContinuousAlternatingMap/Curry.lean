@@ -14,10 +14,11 @@ namespace ContinuousAlternatingMap
 
 section Curry
 
-variable {𝕜 E F : Type*} [NontriviallyNormedField 𝕜]
+variable {𝕜 E F ι ι' : Type*} [NontriviallyNormedField 𝕜]
   [NormedAddCommGroup E] [NormedSpace 𝕜 E]
   [NormedAddCommGroup F] [NormedSpace 𝕜 F]
-  {n : ℕ}
+  [Fintype ι] [Fintype ι']
+  {m n : ℕ}
 
 def uncurryFin (f : E →L[𝕜] E [⋀^Fin n]→L[𝕜] F) :
     E [⋀^Fin (n + 1)]→L[𝕜] F :=
@@ -81,6 +82,10 @@ theorem uncurryFin_uncurryFinCLM_comp_of_symmetric {f : E →L[𝕜] E →L[𝕜
   rw [hf (v i), ← Fin.removeNth_removeNth_eq_swap, Fin.removeNth_apply _ (i.succAbove j),
     Fin.succAbove_succAbove_predAbove, Fin.neg_one_pow_succAbove_add_predAbove, pow_succ',
     neg_one_mul, neg_smul, Fin.removeNth_apply, add_neg_cancel]
+
+def uncurrySum (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) : E [⋀^ι ⊕ ι']→L[𝕜] F := by sorry
+
+def uncurryFinAdd (f : E [⋀^Fin m]→L[𝕜] E [⋀^Fin n]→L[𝕜] F) : E [⋀^Fin (m + n)]→L[𝕜] F := by sorry
 
 end Curry
 
