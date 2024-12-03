@@ -17,9 +17,15 @@ variable
   {ι : Type*} [Fintype ι]
   {ι' : Type*} [Fintype ι']
 
-def _root_.ContinuousLinearMap.compContinuousAlternatingMap₂ (f : N →L[𝕜] N' →L[𝕜] N'')
-  (g : M [⋀^ι]→L[𝕜] N) (h : M' [⋀^ι']→L[𝕜] N') : M [⋀^ι]→L[𝕜] M' [⋀^ι']→L[𝕜] N'' := by sorry
+def flip₁ (f : M [⋀^ι]→L[𝕜] (N' →L[𝕜] N'')) : N' →L[𝕜] M [⋀^ι']→L[𝕜] N'' := sorry
 
-theorem _root_.ContinuousLinearMap.compContinuousAlternatingMap₂_inv (f : N →L[𝕜] N' →L[𝕜] N'')
+def flip₂ (f : M' [⋀^ι']→L[𝕜] (M [⋀^ι]→L[𝕜] N'')) : M [⋀^ι]→L[𝕜] M' [⋀^ι']→L[𝕜] N'' := sorry
+
+def _root_.ContinuousLinearMap.compContinuousAlternatingMap₂ (f : N →L[𝕜] N' →L[𝕜] N'')
+  (g : M [⋀^ι]→L[𝕜] N) (h : M' [⋀^ι']→L[𝕜] N') : M [⋀^ι]→L[𝕜] M' [⋀^ι']→L[𝕜] N'' := sorry
+    -- Option 1: ((f.compContinuousAlternatingMap g).flip₁.compContinuousAlternatingMap h).flip₂
+    -- Option 2: fun m m' ↦ ((f.compContinuousAlternatingMap g) m).compContinuousAlternatingMap h m'
+
+theorem _root_.ContinuousLinearMap.compContinuousAlternatingMap₂_apply (f : N →L[𝕜] N' →L[𝕜] N'')
   (g : M [⋀^ι]→L[𝕜] N) (h : M' [⋀^ι']→L[𝕜] N') (m : ι → M) (m': ι' → M') :
-    f.compContinuousAlternatingMap₂ g h m m' = f (g m) (h m') := by sorry
+    f.compContinuousAlternatingMap₂ g h m m' = f (g m) (h m') := sorry
