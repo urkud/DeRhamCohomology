@@ -48,6 +48,12 @@ theorem ederiv_ederiv (ω : Ω^n⟮E, F⟯) (h : ContDiff ℝ 2 ω) : ederiv (ed
 def ederivWithin (ω : Ω^n⟮E, F⟯) (s : Set E) : Ω^n + 1⟮E, F⟯ :=
   fun (x : E) ↦ .uncurryFin (fderivWithin ℝ ω s x)
 
+@[simp]
+theorem ederivWithin_univ (ω : Ω^n⟮E, F⟯) :
+    ederivWithin ω univ = ederiv ω := by
+  ext1 x
+  rw[ederivWithin, ederiv, fderivWithin_univ]
+
 theorem Filter.EventuallyEq.ederivWithin_eq {ω₁ ω₂ : Ω^n⟮E, F⟯} {s : Set E} {x : E}
     (hs : ω₁ =ᶠ[𝓝[s] x] ω₂) (hx : ω₁ x = ω₂ x) : ederivWithin ω₁ s x = ederivWithin ω₂ s x := by
   simp only[ederivWithin, uncurryFin, hs.fderivWithin_eq hx]
