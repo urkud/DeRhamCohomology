@@ -7,11 +7,49 @@ noncomputable section
 open Filter ContinuousAlternatingMap Set
 open scoped Topology
 
-variable {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-  [NormedAddCommGroup F] [NormedSpace ℝ F] {n : ℕ}
+variable {E F G : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+  [NormedAddCommGroup F] [NormedSpace ℝ F]
+  [NormedAddCommGroup G] [NormedSpace ℝ G] {n k : ℕ}
 
 -- TODO: change notation
 notation "Ω^" n "⟮" E ", " F "⟯" => E → E [⋀^Fin n]→L[ℝ] F
+
+variable {v : E}
+variable (ω τ : Ω^n⟮E, F⟯)
+variable (f : E → F)
+
+@[simp]
+theorem add_apply : (ω + τ) v = ω v + τ v :=
+  rfl
+
+@[simp]
+theorem sub_apply : (ω - τ) v = ω v - τ v :=
+  rfl
+
+@[simp]
+theorem neg_apply : (-ω) v = -ω v :=
+  rfl
+
+@[simp]
+theorem smul_apply (ω : Ω^n⟮E, F⟯) (c : ℝ) : (c • ω) v = c • ω v :=
+  rfl
+
+@[simp]
+theorem zero_apply : (0 : Ω^n⟮E, F⟯) v = 0 :=
+  rfl
+
+/- The natural equivalence between differential forms from `E` to `F`
+and maps from `E` to continuous 1-multilinear alternating maps from `E` to `F`. -/
+def ofSubsingleton :
+    (E → E →L[ℝ] F) ≃ (Ω^1⟮E, F⟯) where
+  toFun f := fun e ↦ ContinuousAlternatingMap.ofSubsingleton ℝ E F 0 (f e)
+  invFun f := fun e ↦ (ContinuousAlternatingMap.ofSubsingleton ℝ E F 0).symm (f e)
+  left_inv _ := rfl
+  right_inv _ := by simp
+
+/- The constant map is a differential form when `Fin n` is empty -/
+def constOfIsEmpty (x : F) : Ω^0⟮E, F⟯ :=
+  fun _ ↦ ContinuousAlternatingMap.constOfIsEmpty ℝ E (Fin 0) x
 
 /-- Exterior derivative of a differential form. -/
 def ederiv (ω : Ω^n⟮E, F⟯) : Ω^n + 1⟮E, F⟯ :=
@@ -113,3 +151,35 @@ theorem ederivWithin_ederivWithin (ω : Ω^n⟮E, F⟯) {s : Set E} {t : Set (E 
     (hst : MapsTo (fderivWithin ℝ ω s) s t) (h : ContDiffOn ℝ 2 ω s) (hs : UniqueDiffOn ℝ s) :
     EqOn (ederivWithin (ederivWithin ω s) s) 0 (s ∩ (closure (interior s))) :=
   fun _ ⟨ hx, hxx ⟩ => ederivWithin_ederivWithin_apply ω hxx hx hst (h.contDiffWithinAt hx) hs
+
+/- Pullback of a differential form -/
+def pullback (f : E → F) (ω : Ω^k⟮F, G⟯) : Ω^k⟮E, G⟯ :=
+  fun x ↦ (ω (f x)).compContinuousLinearMap (fderiv ℝ f x)
+
+theorem pullback_zero (f : E → F) :
+    pullback f (0 : Ω^k⟮F, G⟯) = 0 :=
+  rfl
+
+theorem pullback_add (f : E → F) (ω : Ω^k⟮F, G⟯) (τ : Ω^k⟮F, G⟯) :
+    pullback f (ω + τ) = pullback f ω + pullback f τ :=
+  rfl
+
+theorem pullback_sub (f : E → F) (ω : Ω^k⟮F, G⟯) (τ : Ω^k⟮F, G⟯) :
+    pullback f (ω - τ) = pullback f ω - pullback f τ :=
+  rfl
+
+theorem pullback_neg (f : E → F) (ω : Ω^k⟮F, G⟯) :
+    - pullback f ω = pullback f (-ω) :=
+  rfl
+
+theorem pullback_smul (f : E → F) (ω : Ω^k⟮F, G⟯) (c : ℝ) :
+    c • (pullback f ω) = pullback f (c • ω) :=
+  rfl
+
+theorem pullback_ofSubsingleton (f : E → F) (ω : F → F →L[ℝ] G) :
+    pullback f (ofSubsingleton ω) = ofSubsingleton (fun e ↦ (ω (f e)).comp (fderiv ℝ f e)) :=
+  rfl
+
+theorem pullback_constOfIsEmpty (f : E → F) (g : G) :
+    pullback f (constOfIsEmpty g) = fun _ ↦ (ContinuousAlternatingMap.constOfIsEmpty ℝ E (Fin 0) g) :=
+  rfl
