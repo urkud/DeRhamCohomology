@@ -14,3 +14,275 @@
   \item \(f\) is a continuous map.
   \end{itemize}
 \end{definition}
+
+We will use notation\todo{Better \LaTeX\ notation.} \(E [\bigwedge^{I}]\to L[\mathbb k] F\)
+for the type of continuous alternating maps from \(E^{I}\) to \(F\).
+We will also write (in the blueprint but not in Lean code)
+\(E [\bigwedge^{k}]\to L[\mathbb k] F\) for \(E [\bigwedge^{\Fin k}]\to L[\mathbb k] F\).
+
+\section{Pointwise operations}%
+\label{sec:pointwise-operations}
+
+\subsection{Arithmetic}%
+\label{sec:arithmetic}
+
+\begin{theorem}%
+  \label{thm:normed-grp}
+  If \(E\) is a seminormed space over \(\mathbb k\) and \(F\) is a (semi)normed space over \(\mathbb k\),
+  then \(k\)-alternating maps from \(E\) to \(F\) form a (semi)normed space over \(\mathbb k\).
+  The addition and scalar multiplication are pointwise, and the norm is given by
+  \begin{equation}
+    \label{eq:alt-norm}
+    \|f\| = \operatorname{Inf} \left\{C \mid C \ge 0 \wedge \forall m, \|f(m)\| \le C\prod_{i=0}^{k-1}\|m_{i}\|\right\}.
+  \end{equation}
+\end{theorem}
+
+\subsection{Prod, pi}%
+\label{sec:prod-pi}
+
+\todo[inline]{Define prod, pi (what else?) of CAMs}
+
+\subsection{Composition}%
+\label{sec:composition}
+
+\begin{theorem}%
+  \label{thm:clm-comp}
+  If \(g\colon F \to G\) is a continuous linear map between topological vector spaces over \(\mathbb k\)
+  and \(f\colon E [\bigwedge^{I}]\to L[\mathbb k] F\) is a continuous altenrating map,
+  then \(g \circ f\colon E [\bigwedge^{I}]\to L[\mathbb k] G\) is a continuous alternating map.
+\end{theorem}
+
+\begin{theorem}%
+  \label{thm:comp-clm}
+  If \(g\colon F [\bigwedge^{I}]\to L[\mathbb k] G\) is a continuous altenrating map
+  and \(f\colon E \to F\) is a continuous linear map
+  then \(f^{*}g \colon E [\bigwedge^{I}]\to L[\mathbb k] G\) given by \(f^{*}g(\dots, x_{j}, \dots) = g (\dots, f(x_{j}), \dots)\) is a continuous alternating map.
+\end{theorem}
+
+\subsection{Flipping the arguments}%
+\label{sec:flipping-arguments}
+
+\todo[inline]{Flip CLM with CAM, both ways}
+\todo[inline]{Flip CAM with CAM}
+
+\subsection{Low order}%
+\label{sec:low-order}
+
+For \(k = 0\) and \(k = 1\), there are simple descriptions of the space of continuous altenrating forms,
+given by the following definitions.
+
+\begin{definition}
+  If \(I\) is an empty type (e.g., \(\Fin 0\)),
+  then the map sending the unique element of \(E^{I}\) to a constant \(c\)
+  is a continuous alternating map.
+  Moreover, this construction provides a continuous linear equivalence \(\mkZero\)
+  between \(F\) and \(E [\bigwedge^{I}]\to L[\mathbb k] G\).
+\end{definition}
+
+\begin{definition}
+  If \(I\) has a unique element \(i\) (e.g., \(I = \Fin 1\) and \(i = 0\)),
+  then continuous alternating maps from \(E^{I}\) to \(F\) are just continuous linear maps from \(E\) to \(F\).
+  The equivalence is given by \(\mkOne\).
+\end{definition}
+
+\subsection{Finite dimensional}%
+\label{sec:finite-dimensional}
+
+\begin{theorem}
+  If the domain \(E\) is a finite dimensional topological vector space with Hausdorff topology,
+  then any multilinear map from \(E\) is continuous.
+\end{theorem}
+
+\begin{theorem}
+  If the domain \(E\) is a finite dimensional topological vector space with Hausdorff topology,
+  then any alternating map from \(E\) is continuous.
+\end{theorem}
+
+\subsection{Basis}%
+\label{sec:basis}
+
+\todo[inline]{Define a basis on the space of (continuous) alternating maps given bases in the domain and in the codomain.}
+
+\subsection{Alternatization}%
+\label{sec:alternatization}
+
+\todo[inline]{Write a section about alternatization and why we rarely use it (avoid division by currying instead).}
+
+\subsection{Currying}%
+\label{sec:currying}
+
+\begin{theorem}
+  If \(f\colon E [\bigwedge^{k + 1}]\to L[\mathbb k] F\) is a \((k + 1)\)-alternating map and \(v\) is a vector,
+  then \(f_{v}\colon E [\bigwedge^{k}]\to L[\mathbb k] F\) given by
+  \[
+    f_{v}(x_{0}, \dots, x_{k - 1})=f(v, x_{0}, \dots, x_{k - 1})
+  \]
+  is a \(k\)-alternating map.
+  Moreover, this map is linear in \(f\) and \(v\), so we can define
+  \begin{align}
+    \curryOne&\colon (E [\bigwedge^{k + 1}]\to L[\mathbb k] F) \to L[\mathbb k] E \to L[\mathbb k] E [\bigwedge^{k}]\to L[\mathbb k] F\\
+    (\curryOne f)(v)(x) &= f(v, x).
+  \end{align}
+\end{theorem}
+
+\todo[inline]{Define currying for \(k + l\)-alternating maps.}
+\begin{definition}%
+  \label{def:alt-one}
+  Let \(f\colon E^{k + 1}\to F\) be a continuous multilinear map which is alternating in all but the first variable.
+  Formally, we represent this as \(f\) being a continuous linear map on \(E\) taking values in the space of continuous alternating maps \(E^{k}\to F\).
+  Define the \emph{uncurrying} or \emph{\(1\)-alternatization} of \(f\) to be the continuous alternating map given by
+  \[
+    \altOne(f)(x_{0}, \dots, x_{k}) = \sum_{j=0}^{k}{(-1)}^{j}f(x_{j}, x_{0}, \dots, \widehat{x_{j}}, \dots, x_{k}),
+  \]
+  where \(\widehat{x_{j}}\) means that \(x_{j}\) is removed from the sequence.
+  Here \({(-1)}^{j}\) is the sign of the cyclic permutation \((0, \dots, j)\).
+\end{definition}
+
+\begin{theorem}
+  If \(f\) is a continuous \(k\)-alternating map, then \(\altOne(\curryOne f) = (k + 1)f\).
+\end{theorem}
+
+\begin{remark}
+  We do not divide the result of \autoref{def:alt-one} by \(k + 1\)
+  to ensure that it works if \(\mathbb k\) has a positive characteristic.%
+  \todo{Are there any nontrivially normed fields of positive characteristic?}
+\end{remark}
+
+\begin{theorem}
+  Let \(f\colon E^{k + 2}\to F\) be a continuous multilinear map which is alternating in all but the first two variables.
+  If \(f\) is symmetric in the first two variables, then \(\altOne(\altOne(f)) = 0\).
+\end{theorem}
+
+
+\begin{definition}
+  Let \(f\colon E^{k + l}\to F\) be a continuous multilinear map
+  which is alternating in the first \(k\) argument and in the other \(l\) arguments.
+  Then \(\altAdd_{k,l}(f)\) is the continuous alternating map given by
+  \[
+    \altAdd_{k,l}(f)(x_{0}, \dots, x_{k + l - 1})=\sum_{\substack{s\subseteq [0, k + l)\\|s|=k}}{(-1)}^{\sign \sigma_{s}}f(\sigma_{s}(0), \dots, \sigma_{s}(k + l - 1)),
+  \]
+  where \(\sigma_{s}\) is a permutation of \(\Fin (k + l)\) that sends \(s\) to \([0, k)\) and its complement to \([k, k + l)\).
+  The exact choice of \(\sigma_{s}\) is not important, but we choose the permutation that is monotone both on \(s\) and on its complement.
+\end{definition}
+
+\begin{theorem}
+  If \(k = 1\), then \(\altAdd_{1, l}(\mkOne(f)) = \altAdd_{1}(f)\).
+\end{theorem}
+
+\begin{theorem}
+  If \(f\) is a continuous alternating map, then \(\curry_{k, l}(\altAdd_{k, l}(f)) = \binom{k + l}{k}f\).
+\end{theorem}
+
+\section{Wedge product}%
+\label{sec:wedge-product}
+
+\begin{definition}
+  Consider a continuous bilinear map \(f \colon E' \times F' \to G\)
+  and continuous alternating maps \(g\colon E^{I}\to E'\) and \(h\colon F^{J}\to F'\).
+  Then the formula
+  \[
+    f \circ_{2} (g, h)(v, w) = f(g(v), h(w))
+  \]
+  defines a continuous multilinear map \(E^{I}\times F^{J}\to G\)
+  which is alternating both in the first \(I\) variables and in the other \(J\) variables.
+\end{definition}
+
+\begin{definition}
+  Let \(f \colon F \times G \to H\) be a continuous bilinear map.
+  Let \(\omega \colon E^{k} \to F\) and \(\eta\colon E^{l}\to G\) be continuous alternating maps.
+  Then the \emph{wedge product} of \(\omega\) and \(\eta\) with respect to \(f\) is given by
+  \[
+    \omega \wedge_{f} \eta = \altAdd_{k, l}(f \circ_{2}(g, h)).
+  \]
+\end{definition}
+
+The most common case is \(F = G = H = \mathbb k\) and \(f\) is the multiplication,
+but other bilinear maps (e.g., the inner product on a Hilbert space) are useful in some cases.
+
+\begin{theorem}
+  
+\end{theorem}
+
+\chapter{Differential forms on a normed space}%
+\label{cha:differential-forms-normed-space}
+
+In this chapter we study differential forms on a normed vector space.
+We use notation \(\Omega^{k}(E, F)\) for the space of differential \(k\)-forms on \(E\) taking values in \(F\),
+where a \(k\)-form is a map from \(E\) to \(E [\bigwedge^{I}]\to L[\mathbb k] F\).
+
+For now, we only consider real \(k\)-forms, though we may generalize the notion to any field in the future.
+\todo{Generalize \(k\)-forms to any field; if a field isn't \(\mathbb R\) or \(\mathbb C\), then only analytic \(k\)-forms satisfy \(d^{2}=0\).}
+
+All pointwise operations (arithmetic, compositions with continuous linear map, currying).
+
+\section{Pullback}%
+\label{sec:pullback}
+
+\begin{definition}
+  The \emph{pullback} of \(\omega\in \Omega^{k}(F, G)\) along a map \(f\colon E\to F\) within a set \(s\)
+  is the \(k\)-form \(f_{s}^{*}\omega\) given by \(f^{*}\omega(x) = {(d_{s}f(x))}^{*}\omega(f(x))\),
+  where \(d_{s}f(x)\) is the Fréchet derivative of \(f\) within \(s\) at \(x\),
+  and the right-hand side is defined in~\autoref{thm:comp-clm}.
+\end{definition}
+
+\begin{definition}
+  The \emph{pullback} of \(\omega\in \Omega^{k}(F, G)\) along a map \(f\colon E\to F\)
+  is the pullback of \(\omega\) along \(f\) within the universal set in the domain.
+\end{definition}
+
+\begin{theorem}
+  The pullback \(f_{s}^{*}\omega\) within a set is a continuous linear map in \(\omega\).
+\end{theorem}
+
+\begin{theorem}
+  The pullback \(f^{*}\omega\) is a continuous linear map in \(\omega\).
+\end{theorem}
+
+\begin{theorem}
+  The pullback (within a set) of the \(0\)-form given by a function \(f\colon F\to G\) along a map \(g\colon E\to F\)
+  is the \(0\)-form given by the function \(f\circ g\).
+
+  Note that this statement is true even if \(g\) is not differentiable.
+\end{theorem}
+
+\todo[inline]{Formulate a similar statement about the pullback of a \(1\)-form.}
+\todo[inline]{Formulate a similar statement about the pullback of the wedge product of forms.}
+
+\section{Exterior derivative}%
+\label{sec:exterior-derivative}
+
+\begin{definition}%
+  \label{def:ederivWithin}
+  Consider a differential \(k\)-form \(\omega \in \Omega^{k}(E, F)\).
+  By definition, its Fréchet derivative within a set \(s\) at a point \(x\)
+  is a continuous linear map taking values in the space of continuous alternating maps from \(E^{k}\) to \(F\).
+  The \emph{exterior derivative} of \(\omega\) \emph{within} \(s\) is the \((k + 1)\)-form \(d_{s}\omega\in\Omega^{k + 1}(E, F)\)
+  that sends each \(x\) to the uncurrying of this Fréchet derivative.
+\end{definition}
+
+\begin{definition}%
+  \label{def:ederiv}
+  The \emph{exterior derivative} of a differential \(k\)-form \(\omega\)
+  is its exterior derivative within the universal set in the domain.
+\end{definition}
+
+\begin{theorem}
+  Assume that \(\omega\) is twice differentiable within \(s\) at \(x\)
+  and the second derivatives commute. Then \(d_{s}(d_{s}\omega) = 0\).
+  The latter condition automatically holds, if the base field is
+  \(\mathbb R\) or \(\mathbb C\) and \(s\) is a convex set with
+  nonempty interior.
+\end{theorem}
+
+\begin{theorem}
+  The pullback commutes with the exterior derivative.
+  \todo[inline]{What are the exact assumptions?}
+  \todo[inline]{Write a proof.}
+\end{theorem}
+
+\chapter{Vector bundle of continuous alternating maps}%
+\label{cha:vect-bundle-cont}
+
+\chapter{Differential forms on a manifold}%
+\label{cha:diff-forms-manif}
+
