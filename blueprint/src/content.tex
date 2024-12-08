@@ -314,9 +314,30 @@ All pointwise operations (arithmetic, compositions with continuous linear map, c
 \begin{theorem}
   The pullback commutes with the exterior derivative.
   \todo[inline]{What are the exact assumptions?}
-  \todo[inline]{Write a proof.}
 \end{theorem}
 
+\begin{proof}
+  For simplicity, we only prove this theorem
+  for the non-restricted exterior derivative and pullback.
+
+  Consider a differentiable function \(f\colon E \to F\)
+  and a differentiable \(k\)-form \(\omega\in \Omega^{k}(F, G)\).
+  Take \(k+1\) vectors \(X_{0}, \dots, X_{k}\in E\).
+  Simplify both sides.
+  \begin{align*}
+    (f^{*}d\omega(a))(X_{0}, \dots, X_{k})
+    &=(d\omega)(f(a))(f_{*}(a)X_{0}, \dots, f_{*}(a)X_{k})\\
+    &=\sum_{j=0}^{k}{(-1)}^{j}\partial_{f_{*}(a)X_{j}}\omega(y)(\dots, \widehat{f_{*}(a)X_{j}}, \dots)
+  \end{align*}
+  OTOH,
+  \begin{align*}
+    d(f^{*}\omega)(a)(X_{0}, \dots, X_{k})
+    &=\sum_{j=0}^{k}{(-1)}^{j}\partial_{X_{j}}(f^{*}\omega)(\dots, \widehat{X_{j}}, \dots)\\
+    &=\sum_{j=0}^{k}{(-1)}^{j}\partial_{X_{j}}\left[\omega(f(x))(\dots, \widehat{f_{*}(x)X_{j}}, \dots)\right]\\
+    &=(f^{*}d\omega(a))(X_{0}, \dots, X_{k}) + \sum_{j=0}^{k}{(-1)}^{j}\partial_{X_{j}}\left[\omega(f(a))(\dots, \widehat{f_{*}(x)X_{j}}, \dots)\right]\\
+  \end{align*}
+  \todo[inline]{It looks like we can prove a formula that implies both this and the formula for \(d\omega(X_{0}, \dots, X_{k})\), where \(X_{j}\) are vector fields.}
+\end{proof}
 \chapter{Vector bundle of continuous alternating maps}%
 \label{cha:vect-bundle-cont}
 
