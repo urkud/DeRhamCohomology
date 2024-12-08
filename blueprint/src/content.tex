@@ -198,9 +198,46 @@ given by the following definitions.
 
 The most common case is \(F = G = H = \mathbb k\) and \(f\) is the multiplication,
 but other bilinear maps (e.g., the inner product on a Hilbert space) are useful in some cases.
+We use notation \(\omega \wedge \eta\) for \(f(a, b) = ab\).
+
+\todo[inline]{Add obvious theorems about dependency of \(\omega \wedge_{f} \eta\)on \(f\). E.g., \(\omega \wedge_{g \circ f} \eta = g \circ (\omega \wedge_{f} \eta)\).}
 
 \begin{theorem}
-  
+  Wedge product \(\omega \wedge_{f} \eta\) is linear in \(f\), \(\omega\), and \(\eta\).
+  \todo{Do we need 3 theorems to link to 3 Lean theorems? Or should we create a huge bundled continuous linear map?}
+\end{theorem}
+
+\begin{theorem}
+  The wedge product is associative\todo{Add a version for \(\omega \wedge_{f}\eta\); we'll need several spaces and continuous bilinear maps here}, \((\omega_{1}\wedge \omega_{2})\wedge \omega_{3} = \omega_{1}\wedge (\omega_{2}\wedge \omega_{3})\).
+  Note that in Lean the sides have different types as \((k + l) + m = k + (l + m)\) is not a definitional equality,
+  so the formalized statement involves a natural isomorphism.
+\end{theorem}
+
+\begin{theorem}
+  If \(a\) is a vector and \(\omega\) is a continuous alternating map,
+  then \(\mkZero a \wedge_{f} \omega = f(a) \circ \omega\).
+\end{theorem}
+
+\begin{theorem}
+  If \(a\) is a number and \(\omega\) is a continuous alternating map,
+  then \(\mkZero a \wedge_{f} \omega = f(a) \circ \omega\).
+\end{theorem}
+
+\begin{theorem}
+  If \(\omega\colon E^{k}\to F\) and \(\eta\colon E^{l}\to G\) are continuous alternating maps
+  and \(f \colon F \times G \to H\) is a continuous bilinear map,
+  then \(\omega \wedge_{f} \eta = {(-1)}^{kl}\eta \wedge_{f'} \omega\),
+  where \(f'(y, x) = f(x, y)\).
+  Note that the LHS and the RHS have different types in Lean,
+  so the actual statement involves a natural isomorphism.
+\end{theorem}
+
+We will need the following definition, if we want to define contact forms and symplectic forms:
+
+\begin{theorem}
+  Let \(\omega\colon E^{2}\to \mathbb R\) be a skew-symmetric bilinear map on a vector space of dimension \(2k\).
+  Then \(\omega\wedge\dots\wedge\omega = 0\) iff the corresponding matrix has determinant zero.
+  \todo{We may need \(n\)-ary version of the wedge product to define this. Or should we just define the power by induction?}
 \end{theorem}
 
 \chapter{Differential forms on a normed space}%
