@@ -28,6 +28,7 @@ We will also write (in the blueprint but not in Lean code)
 
 \begin{theorem}%
   \label{thm:normed-grp}
+  \uses{def:cont-alt-map}
   If \(E\) is a seminormed space over \(\mathbb k\) and \(F\) is a (semi)normed space over \(\mathbb k\),
   then \(k\)-alternating maps from \(E\) to \(F\) form a (semi)normed space over \(\mathbb k\).
   The addition and scalar multiplication are pointwise, and the norm is given by
@@ -71,7 +72,9 @@ We will also write (in the blueprint but not in Lean code)
 For \(k = 0\) and \(k = 1\), there are simple descriptions of the space of continuous altenrating forms,
 given by the following definitions.
 
-\begin{definition}
+\begin{definition}%
+  \label{def:cont-alt-map-zero}
+  \uses{def:cont-alt-map}
   If \(I\) is an empty type (e.g., \(\Fin 0\)),
   then the map sending the unique element of \(E^{I}\) to a constant \(c\)
   is a continuous alternating map.
@@ -79,7 +82,9 @@ given by the following definitions.
   between \(F\) and \(E [\bigwedge^{I}]\to L[\mathbb k] G\).
 \end{definition}
 
-\begin{definition}
+\begin{definition}%
+  \label{def:cont-alt-map-one}
+  \uses{def:cont-alt-map}
   If \(I\) has a unique element \(i\) (e.g., \(I = \Fin 1\) and \(i = 0\)),
   then continuous alternating maps from \(E^{I}\) to \(F\) are just continuous linear maps from \(E\) to \(F\).
   The equivalence is given by \(\mkOne\).
@@ -88,12 +93,15 @@ given by the following definitions.
 \subsection{Finite dimensional}%
 \label{sec:finite-dimensional}
 
-\begin{theorem}
+\begin{theorem}%
+  \label{thm:cont-mult-map-findim}
   If the domain \(E\) is a finite dimensional topological vector space with Hausdorff topology,
   then any multilinear map from \(E\) is continuous.
 \end{theorem}
 
-\begin{theorem}
+\begin{theorem}%
+  \label{thm:cont-alt-map-findim}
+  \uses{def:cont-alt-map}
   If the domain \(E\) is a finite dimensional topological vector space with Hausdorff topology,
   then any alternating map from \(E\) is continuous.
 \end{theorem}
@@ -111,7 +119,9 @@ given by the following definitions.
 \subsection{Currying}%
 \label{sec:currying}
 
-\begin{theorem}
+\begin{definition}%
+  \label{def:cont-alt-curry-fin}
+  \uses{def:cont-alt-map}
   If \(f\colon E [\bigwedge^{k + 1}]\to L[\mathbb k] F\) is a \((k + 1)\)-alternating map and \(v\) is a vector,
   then \(f_{v}\colon E [\bigwedge^{k}]\to L[\mathbb k] F\) given by
   \[
@@ -123,11 +133,22 @@ given by the following definitions.
     \curryOne&\colon (E [\bigwedge^{k + 1}]\to L[\mathbb k] F) \to L[\mathbb k] E \to L[\mathbb k] E [\bigwedge^{k}]\to L[\mathbb k] F\\
     (\curryOne f)(v)(x) &= f(v, x).
   \end{align}
-\end{theorem}
+\end{definition}
 
-\todo[inline]{Define currying for \(k + l\)-alternating maps.}
+\begin{definition}%
+  \label{def:cont-alt-curry-fin-add}
+  Let \(f\colon E^{k + l} \to F\) be a continuous alternating map.
+  For each vector \(x \in E^{k}\), the formula
+  \[
+    \left(\curry_{k,l} f(x)\right)(y) = f(x, y)
+  \]
+  defines a continuous alternating map \(E^{l}\to F\).
+  Moreover, this function 
+\end{definition}
+
 \begin{definition}%
   \label{def:alt-one}
+  \uses{def:cont-alt-map}
   Let \(f\colon E^{k + 1}\to F\) be a continuous multilinear map which is alternating in all but the first variable.
   Formally, we represent this as \(f\) being a continuous linear map on \(E\) taking values in the space of continuous alternating maps \(E^{k}\to F\).
   Define the \emph{uncurrying} or \emph{\(1\)-alternatization} of \(f\) to be the continuous alternating map given by
@@ -138,7 +159,11 @@ given by the following definitions.
   Here \({(-1)}^{j}\) is the sign of the cyclic permutation \((0, \dots, j)\).
 \end{definition}
 
-\begin{theorem}
+\begin{theorem}%
+  \label{thm:uncurry-curry-one}
+  \uses{def:cont-alt-map}
+  \uses{def:alt-one}
+  \uses{def:cont-alt-curry-fin}
   If \(f\) is a continuous \(k\)-alternating map, then \(\altOne(\curryOne f) = (k + 1)f\).
 \end{theorem}
 
@@ -148,13 +173,16 @@ given by the following definitions.
   \todo{Are there any nontrivially normed fields of positive characteristic?}
 \end{remark}
 
-\begin{theorem}
+\begin{theorem}%
+  \label{thm:uncurry2-eq-zero}
+  \uses{def:cont-alt-map}
   Let \(f\colon E^{k + 2}\to F\) be a continuous multilinear map which is alternating in all but the first two variables.
   If \(f\) is symmetric in the first two variables, then \(\altOne(\altOne(f)) = 0\).
 \end{theorem}
 
 
-\begin{definition}
+\begin{definition}%
+  \label{def:uncurry-fin-add}
   Let \(f\colon E^{k + l}\to F\) be a continuous multilinear map
   which is alternating in the first \(k\) argument and in the other \(l\) arguments.
   Then \(\altAdd_{k,l}(f)\) is the continuous alternating map given by
@@ -165,11 +193,14 @@ given by the following definitions.
   The exact choice of \(\sigma_{s}\) is not important, but we choose the permutation that is monotone both on \(s\) and on its complement.
 \end{definition}
 
-\begin{theorem}
+\begin{theorem}%
+  \label{thm:uncurry-fin-add-one}
   If \(k = 1\), then \(\altAdd_{1, l}(\mkOne(f)) = \altAdd_{1}(f)\).
 \end{theorem}
 
-\begin{theorem}
+\begin{theorem}%
+  \label{thm:curry-uncurry-fin-add}
+  \uses{def:uncurry-fin-add}
   If \(f\) is a continuous alternating map, then \(\curry_{k, l}(\altAdd_{k, l}(f)) = \binom{k + l}{k}f\).
 \end{theorem}
 
