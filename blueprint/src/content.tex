@@ -15,11 +15,6 @@
   \end{itemize}
 \end{definition}
 
-We will use notation\todo{Better \LaTeX\ notation.} \(E [\bigwedge^{I}]\to L[\mathbb k] F\)
-for the type of continuous alternating maps from \(E^{I}\) to \(F\).
-We will also write (in the blueprint but not in Lean code)
-\(E [\bigwedge^{k}]\to L[\mathbb k] F\) for \(E [\bigwedge^{\Fin k}]\to L[\mathbb k] F\).
-
 \section{Pointwise operations}%
 \label{sec:pointwise-operations}
 
@@ -37,6 +32,9 @@ We will also write (in the blueprint but not in Lean code)
     \|f\| = \operatorname{Inf} \left\{C \mid C \ge 0 \wedge \forall m, \|f(m)\| \le C\prod_{i=0}^{k-1}\|m_{i}\|\right\}.
   \end{equation}
 \end{theorem}
+\begin{proof}
+  The statement immediately follows from a similar statement about continuous multilinear maps.
+\end{proof}
 
 \subsection{Prod, pi}%
 \label{sec:prod-pi}
@@ -49,16 +47,24 @@ We will also write (in the blueprint but not in Lean code)
 \begin{theorem}%
   \label{thm:clm-comp}
   If \(g\colon F \to G\) is a continuous linear map between topological vector spaces over \(\mathbb k\)
-  and \(f\colon E [\bigwedge^{I}]\to L[\mathbb k] F\) is a continuous altenrating map,
-  then \(g \circ f\colon E [\bigwedge^{I}]\to L[\mathbb k] G\) is a continuous alternating map.
+  and \(f\colon E^{I} \to F\) is a continuous alternating map,
+  then \(g \circ f\colon E^{I}\to G\) is a continuous alternating map.
 \end{theorem}
 
 \begin{theorem}%
   \label{thm:comp-clm}
-  If \(g\colon F [\bigwedge^{I}]\to L[\mathbb k] G\) is a continuous altenrating map
+  If \(g\colon F^{I} \to G\) is a continuous alternating map
   and \(f\colon E \to F\) is a continuous linear map
-  then \(f^{*}g \colon E [\bigwedge^{I}]\to L[\mathbb k] G\) given by \(f^{*}g(\dots, x_{j}, \dots) = g (\dots, f(x_{j}), \dots)\) is a continuous alternating map.
+  then \(f^{*}g \colon E^{I} \to G\) given by \(f^{*}g(\dots, x_{j}, \dots) = g (\dots, f(x_{j}), \dots)\) is a continuous alternating map.
 \end{theorem}
+
+\begin{lemma}%
+  \label{lem:comp-clm-zero}
+  \uses{thm:comp-clm}
+  If \(g\colon F^{I} \to G\) is a continuous alternating map with nonempty \(I\)
+  (e.g., \(g\colon F^{k}\to G\) and \(k > 0\)),
+  then \(0^{*}g = 0\), where \(0\colon E \to F\) is the zero map.
+\end{lemma}
 
 \subsection{Flipping the arguments}%
 \label{sec:flipping-arguments}
@@ -69,7 +75,7 @@ We will also write (in the blueprint but not in Lean code)
 \subsection{Low order}%
 \label{sec:low-order}
 
-For \(k = 0\) and \(k = 1\), there are simple descriptions of the space of continuous altenrating forms,
+For \(k = 0\) and \(k = 1\), there are simple descriptions of the space of continuous alternating forms,
 given by the following definitions.
 
 \begin{definition}%
@@ -79,7 +85,7 @@ given by the following definitions.
   then the map sending the unique element of \(E^{I}\) to a constant \(c\)
   is a continuous alternating map.
   Moreover, this construction provides a continuous linear equivalence \(\mkZero\)
-  between \(F\) and \(E [\bigwedge^{I}]\to L[\mathbb k] G\).
+  between \(F\) and continuous alternating maps \(E^{I} \to G\).
 \end{definition}
 
 \begin{definition}%
@@ -105,7 +111,10 @@ given by the following definitions.
   If the domain \(E\) is a finite dimensional topological vector space with Hausdorff topology,
   then any alternating map from \(E\) is continuous.
 \end{theorem}
-
+\begin{proof}
+  \uses{thm:cont-mult-map-findim}
+  The proof immediately follows from \autoref{thm:cont-mult-map-findim} and the fact that an alternating map is a multilinear map.
+\end{proof}
 \subsection{Basis}%
 \label{sec:basis}
 
@@ -122,17 +131,14 @@ given by the following definitions.
 \begin{definition}%
   \label{def:cont-alt-curry-fin}
   \uses{def:cont-alt-map}
-  If \(f\colon E [\bigwedge^{k + 1}]\to L[\mathbb k] F\) is a \((k + 1)\)-alternating map and \(v\) is a vector,
-  then \(f_{v}\colon E [\bigwedge^{k}]\to L[\mathbb k] F\) given by
+  If \(f\colon E^{k + 1} \to F\) is a continuous alternating map and \(v\) is a vector,
+  then \(f_{v}\colon E^{k} \to F\) given by
   \[
     f_{v}(x_{0}, \dots, x_{k - 1})=f(v, x_{0}, \dots, x_{k - 1})
   \]
   is a \(k\)-alternating map.
-  Moreover, this map is linear in \(f\) and \(v\), so we can define
-  \begin{align}
-    \curryOne&\colon (E [\bigwedge^{k + 1}]\to L[\mathbb k] F) \to L[\mathbb k] E \to L[\mathbb k] E [\bigwedge^{k}]\to L[\mathbb k] F\\
-    (\curryOne f)(v)(x) &= f(v, x).
-  \end{align}
+  Moreover, this map is linear in \(f\) and \(v\).
+  We will use notation \(\curryOne f\) for the map sending \(v\) to \(f_{v}\).
 \end{definition}
 
 \begin{definition}%
@@ -143,7 +149,7 @@ given by the following definitions.
     \left(\curry_{k,l} f(x)\right)(y) = f(x, y)
   \]
   defines a continuous alternating map \(E^{l}\to F\).
-  Moreover, this function 
+  Moreover, this function is linear in \(f\) and is multilinear in \(x\).
 \end{definition}
 
 \begin{definition}%
@@ -167,10 +173,19 @@ given by the following definitions.
   If \(f\) is a continuous \(k\)-alternating map, then \(\altOne(\curryOne f) = (k + 1)f\).
 \end{theorem}
 
+\begin{lemma}%
+  \label{lem:alt-one-linear}
+  \uses{def:alt-one}
+  The map \(\altOne(f)\) defined above is continuous and linear in \(f\).
+\end{lemma}
+\begin{proof}
+  Linearity follows from the definition.
+  Continuity follows from the inequality \(\|\altOne(f)(x)\|\le (k + 1)\|f\|\prod_{j}\|x_{j}\|\).
+\end{proof}
+
 \begin{remark}
   We do not divide the result of \autoref{def:alt-one} by \(k + 1\)
-  to ensure that it works if \(\mathbb k\) has a positive characteristic.%
-  \todo{Are there any nontrivially normed fields of positive characteristic?}
+  to ensure that it works if \(\mathbb k\) has a positive characteristic.
 \end{remark}
 
 \begin{theorem}%
@@ -189,7 +204,8 @@ given by the following definitions.
   \[
     \altAdd_{k,l}(f)(x_{0}, \dots, x_{k + l - 1})=\sum_{\substack{s\subseteq [0, k + l)\\|s|=k}}{(-1)}^{\sign \sigma_{s}}f(\sigma_{s}(0), \dots, \sigma_{s}(k + l - 1)),
   \]
-  where \(\sigma_{s}\) is a permutation of \(\Fin (k + l)\) that sends \(s\) to \([0, k)\) and its complement to \([k, k + l)\).
+  where for each \(k\)-element set \(s\),
+  \(\sigma_{s}\) is a permutation of \(\Fin (k + l)\) that sends \(s\) to \([0, k)\) and its complement to \([k, k + l)\).
   The exact choice of \(\sigma_{s}\) is not important, but we choose the permutation that is monotone both on \(s\) and on its complement.
 \end{definition}
 
@@ -251,7 +267,7 @@ We use notation \(\omega \wedge \eta\) for \(f(a, b) = ab\).
 
 \begin{theorem}
   If \(a\) is a number and \(\omega\) is a continuous alternating map,
-  then \(\mkZero a \wedge_{f} \omega = f(a) \circ \omega\).
+  then \(\mkZero a \wedge \omega = a\omega\).
 \end{theorem}
 
 \begin{theorem}
@@ -276,7 +292,7 @@ We will need the following definition, if we want to define contact forms and sy
 
 In this chapter we study differential forms on a normed vector space.
 We use notation \(\Omega^{k}(E, F)\) for the space of differential \(k\)-forms on \(E\) taking values in \(F\),
-where a \(k\)-form is a map from \(E\) to \(E [\bigwedge^{I}]\to L[\mathbb k] F\).
+where a \(k\)-form is a map from \(E\) to the space of continuous alternating maps \(E^{k} \to F\).
 
 For now, we only consider real \(k\)-forms, though we may generalize the notion to any field in the future.
 \todo{Generalize \(k\)-forms to any field; if a field isn't \(\mathbb R\) or \(\mathbb C\), then only analytic \(k\)-forms satisfy \(d^{2}=0\).}
@@ -286,25 +302,51 @@ All pointwise operations (arithmetic, compositions with continuous linear map, c
 \section{Pullback}%
 \label{sec:pullback}
 
-\begin{definition}
+\begin{definition}%
+  \label{def:pullback-within}
+  \uses{def:cont-alt-map}
+  \uses{thm:comp-clm}
   The \emph{pullback} of \(\omega\in \Omega^{k}(F, G)\) along a map \(f\colon E\to F\) within a set \(s\)
-  is the \(k\)-form \(f_{s}^{*}\omega\) given by \(f^{*}\omega(x) = {(d_{s}f(x))}^{*}\omega(f(x))\),
+  is the \(k\)-form \(f_{s}^{*}\omega\) given by \(f_{s}^{*}\omega(x) = {(d_{s}f(x))}^{*}\omega(f(x))\),
   where \(d_{s}f(x)\) is the Fréchet derivative of \(f\) within \(s\) at \(x\),
   and the right-hand side is defined in~\autoref{thm:comp-clm}.
 \end{definition}
 
-\begin{definition}
+\begin{lemma}%
+  \label{lem:pullback-within-of-non-diff}
+  If \(f\colon E\to F\) is not differentiable within \(s\) at \(x\) and \(k > 0\),
+  then \(f_{s}^{*}\omega(x)=0\) for any \(k\)-form \(\omega\).
+\end{lemma}
+\begin{proof}
+  \uses{lem:comp-clm-zero}
+  \uses{def:pullback-within}
+  This fact immediately follows from \autoref{lem:comp-clm-zero} and the fact that \(d_{s}f(x)=0\).
+  The latter is true because of the junk values Mathlib uses for derivatives.
+\end{proof}
+
+\begin{definition}%
+  \label{def:pullback-space}
+  \uses{def:pullback-within}
   The \emph{pullback} of \(\omega\in \Omega^{k}(F, G)\) along a map \(f\colon E\to F\)
   is the pullback of \(\omega\) along \(f\) within the universal set in the domain.
 \end{definition}
 
-\begin{theorem}
+\begin{theorem}%
+  \label{thm:pullback-within-as-clm}
+  \uses{def:pullback-within}
   The pullback \(f_{s}^{*}\omega\) within a set is a continuous linear map in \(\omega\).
 \end{theorem}
 
-\begin{theorem}
+\begin{theorem}%
+  \label{thm:pullback-as-clm}
+  \uses{def:pullback-space}
   The pullback \(f^{*}\omega\) is a continuous linear map in \(\omega\).
 \end{theorem}
+
+\begin{proof}
+  \uses{thm:pullback-within-as-clm}
+  This fact immediately follows from \autoref{thm:pullback-within-as-clm}.
+\end{proof}
 
 \begin{theorem}
   The pullback (within a set) of the \(0\)-form given by a function \(f\colon F\to G\) along a map \(g\colon E\to F\)
@@ -315,6 +357,12 @@ All pointwise operations (arithmetic, compositions with continuous linear map, c
 
 \todo[inline]{Formulate a similar statement about the pullback of a \(1\)-form.}
 \todo[inline]{Formulate a similar statement about the pullback of the wedge product of forms.}
+
+\begin{lemma}%
+  \label{lem:pullback-within-wedge}
+  Given a map \(f\colon E\to F\), a set \(s \subset E\), a continuous alternating maps \(\omega\colon F^{k}\to G\), \(\eta\colon F^{l}\to G'\), and a continuous bilinear map \(g\colon G\times G' \to H\),
+  we have \(f_{s}^{*}(\omega \wedge_{g}\eta) = f_{s}^{*}\omega\wedge_{g}f_{s}^{*}\eta\).
+\end{lemma}
 
 \section{Exterior derivative}%
 \label{sec:exterior-derivative}
