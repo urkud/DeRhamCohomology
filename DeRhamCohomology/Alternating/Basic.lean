@@ -19,8 +19,8 @@ variable
 
 def _root_.LinearIsometryEquiv.flipAlternating :
     (M' →L[𝕜] (M [⋀^ι]→L[𝕜] N)) ≃ₗᵢ[𝕜] (M [⋀^ι]→L[𝕜] (M' →L[𝕜] N)) where
-  toFun f := ContinuousLinearMap.flipAlternating f
-  invFun := sorry
+  toFun := ContinuousLinearMap.flipAlternating
+  invFun f := sorry
   map_add' _ _ := rfl
   map_smul' _ _ := rfl
   left_inv := sorry

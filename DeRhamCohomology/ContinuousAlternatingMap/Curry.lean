@@ -83,7 +83,7 @@ theorem uncurryFin_uncurryFinCLM_comp_of_symmetric {f : E →L[𝕜] E →L[𝕜
     Fin.succAbove_succAbove_predAbove, Fin.neg_one_pow_succAbove_add_predAbove, pow_succ',
     neg_one_mul, neg_smul, Fin.removeNth_apply, add_neg_cancel]
 
-def uncurrySum (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) : E [⋀^ι ⊕ ι']→L[𝕜] F := by sorry
+def uncurrySum (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) : E [⋀^ι ⊕ ι']→L[𝕜] F := sorry
 
 def uncurryFinAdd (f : E [⋀^Fin m]→L[𝕜] E [⋀^Fin n]→L[𝕜] F) : E [⋀^Fin (m + n)]→L[𝕜] F := by sorry
 

@@ -68,4 +68,7 @@ def LinearIsometryEquiv.flipMultilinear :
   map_smul' _ _ := rfl
   left_inv := congrFun rfl
   right_inv := congrFun rfl
-  norm_map' := fun x => by sorry -- TODO
+  norm_map' := fun f => by
+    simp
+    simp_rw[ContinuousLinearMap.flipMultilinear, MultilinearMap.mkContinuous, LinearMap.mkContinuous]
+    sorry
