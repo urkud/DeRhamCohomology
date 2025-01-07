@@ -13,7 +13,8 @@ variable
   {E : Type*} [SeminormedAddCommGroup E] [NormedSpace 𝕜 E]
   {F : Type*} [SeminormedAddCommGroup F] [NormedSpace 𝕜 F]
 
-def uncurrySum  (a : ContinuousMultilinearMap 𝕜 (fun _ : ι => E)
+@[simps apply]
+def uncurrySum (a : ContinuousMultilinearMap 𝕜 (fun _ : ι => E)
     (ContinuousMultilinearMap 𝕜 (fun _ : ι' => E) F)) :
     ContinuousMultilinearMap 𝕜 (fun _ : ι ⊕ ι' => E) F where
   toFun v := a (fun i => v (Sum.inl i)) (fun j => v (Sum.inr j))
