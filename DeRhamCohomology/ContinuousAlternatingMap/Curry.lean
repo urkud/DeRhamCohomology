@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yury Kudryashov
 -/
 import Mathlib.Analysis.NormedSpace.Alternating.Basic
-import Mathlib.Analysis.NormedSpace.Multilinear.Curry
 import DeRhamCohomology.AlternatingMap.Curry
+import DeRhamCohomology.Multilinear.Curry
 import DeRhamCohomology.Alternating.Basic
 
 noncomputable section
@@ -85,6 +85,7 @@ theorem uncurryFin_uncurryFinCLM_comp_of_symmetric {f : E →L[𝕜] E →L[𝕜
     neg_one_mul, neg_smul, Fin.removeNth_apply, add_neg_cancel]
 
 def uncurrySum (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) : E [⋀^ι ⊕ ι']→L[𝕜] F := sorry
+  #check ContinuousMultilinearMap.uncurrySum
 
 def uncurryFinAdd (f : E [⋀^Fin m]→L[𝕜] E [⋀^Fin n]→L[𝕜] F) :
     E [⋀^Fin (m + n)]→L[𝕜] F :=
