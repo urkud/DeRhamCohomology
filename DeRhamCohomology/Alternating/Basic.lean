@@ -40,3 +40,21 @@ theorem compContinuousAlternatingMap₂_apply (f : N →L[𝕜] N' →L[𝕜] N'
     (g : M [⋀^ι]→L[𝕜] N) (h : M' [⋀^ι']→L[𝕜] N') (m : ι → M) (m': ι' → M') :
     f.compContinuousAlternatingMap₂ g h m m' = f (g m) (h m') :=
   rfl
+
+end ContinuousLinearMap
+
+namespace ContinuousAlternatingMap
+
+variable
+  {𝕜 : Type*} [NontriviallyNormedField 𝕜]
+  {M : Type*} [NormedAddCommGroup M] [NormedSpace 𝕜 M]
+  {N : Type*} [NormedAddCommGroup N] [NormedSpace 𝕜 N]
+  {ι ι' : Type*}
+
+/-- This is the alternating version of `ContinuousMultilinearMap.domDomCongr`. -/
+def domDomCongr (σ : ι ≃ ι') (f : M [⋀^ι]→L[𝕜] N) : M [⋀^ι']→L[𝕜] N :=
+  { f.toContinuousMultilinearMap.domDomCongr σ with
+    toFun := fun v => f (v ∘ σ)
+    map_eq_zero_of_eq' := fun v i j hv hij =>
+      f.map_eq_zero_of_eq (v ∘ σ) (i := σ.symm i) (j := σ.symm j)
+        (by simpa using hv) (σ.symm.injective.ne hij) }

@@ -6,6 +6,7 @@ Authors: Yury Kudryashov
 import Mathlib.Analysis.NormedSpace.Alternating.Basic
 import Mathlib.Analysis.NormedSpace.Multilinear.Curry
 import DeRhamCohomology.AlternatingMap.Curry
+import DeRhamCohomology.Alternating.Basic
 
 noncomputable section
 suppress_compilation
@@ -85,7 +86,9 @@ theorem uncurryFin_uncurryFinCLM_comp_of_symmetric {f : E →L[𝕜] E →L[𝕜
 
 def uncurrySum (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) : E [⋀^ι ⊕ ι']→L[𝕜] F := sorry
 
-def uncurryFinAdd (f : E [⋀^Fin m]→L[𝕜] E [⋀^Fin n]→L[𝕜] F) : E [⋀^Fin (m + n)]→L[𝕜] F := by sorry
+def uncurryFinAdd (f : E [⋀^Fin m]→L[𝕜] E [⋀^Fin n]→L[𝕜] F) :
+    E [⋀^Fin (m + n)]→L[𝕜] F :=
+  ContinuousAlternatingMap.domDomCongr finSumFinEquiv (uncurrySum f)
 
 end Curry
 

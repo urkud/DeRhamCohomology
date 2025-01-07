@@ -70,5 +70,8 @@ def LinearIsometryEquiv.flipMultilinear :
   right_inv := congrFun rfl
   norm_map' := fun f => by
     simp
-    simp_rw[ContinuousLinearMap.flipMultilinear, MultilinearMap.mkContinuous, LinearMap.mkContinuous]
+    -- simp_rw[ContinuousLinearMap.flipMultilinear, MultilinearMap.mkContinuous, LinearMap.mkContinuous]
+    have h : ∀ m : ((i : ι) → E i), ∀ x : G, ‖f.flipMultilinear m x‖ = ‖f x m‖ := by
+      exact fun m x ↦ rfl
+    -- simp [apply_apply]
     sorry
