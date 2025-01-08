@@ -75,3 +75,28 @@ def LinearIsometryEquiv.flipMultilinear :
       exact fun m x ↦ rfl
     -- simp [apply_apply]
     sorry
+
+namespace ContinuousMultilinearMap
+
+variable
+  {𝕜 : Type*} [NontriviallyNormedField 𝕜]
+  {M : Type*} [NormedAddCommGroup M] [NormedSpace 𝕜 M]
+  {M' : Type*} [NormedAddCommGroup M'] [NormedSpace 𝕜 M']
+  {N : Type*} [NormedAddCommGroup N] [NormedSpace 𝕜 N]
+  {N' : Type*} [NormedAddCommGroup N'] [NormedSpace 𝕜 N']
+  {N'' : Type*} [NormedAddCommGroup N''] [NormedSpace 𝕜 N'']
+  {ι : Type*} [Fintype ι]
+  {ι' : Type*} [Fintype ι']
+
+def flipMultilinear (f : ContinuousMultilinearMap 𝕜 (fun _ : ι ↦ M) (ContinuousMultilinearMap 𝕜 (fun _ : ι' ↦ M') N)) :
+    ContinuousMultilinearMap 𝕜 (fun _ : ι' ↦ M') (ContinuousMultilinearMap 𝕜 (fun _ : ι ↦ M) N) :=
+  MultilinearMap.mkContinuous
+    { toFun := fun m =>
+        MultilinearMap.mkContinuous
+          { toFun := fun m' => f m' m
+            map_update_add' := sorry
+            map_update_smul' := sorry}
+          1 sorry
+      map_update_add' := sorry
+      map_update_smul' := sorry }
+    1 sorry

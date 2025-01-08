@@ -43,6 +43,32 @@ theorem compContinuousAlternatingMap₂_apply (f : N →L[𝕜] N' →L[𝕜] N'
 
 end ContinuousLinearMap
 
+namespace ContinuousMultilinearMap
+
+variable
+  {𝕜 : Type*} [NontriviallyNormedField 𝕜]
+  {M : Type*} [NormedAddCommGroup M] [NormedSpace 𝕜 M]
+  {M' : Type*} [NormedAddCommGroup M'] [NormedSpace 𝕜 M']
+  {N : Type*} [NormedAddCommGroup N] [NormedSpace 𝕜 N]
+  {ι : Type*} [Fintype ι]
+  {ι' : Type*} [Fintype ι']
+
+def flipAlternating (f : ContinuousMultilinearMap 𝕜 (fun _ : ι ↦ M) (M' [⋀^ι']→L[𝕜] N)) :
+    M' [⋀^ι']→L[𝕜] (ContinuousMultilinearMap 𝕜 (fun _ : ι ↦ M) N) :=
+  AlternatingMap.mkContinuous
+    { toFun := fun m =>
+        MultilinearMap.mkContinuous
+          { toFun := fun m' => f m' m
+            map_update_add' := sorry
+            map_update_smul' := sorry }
+          1 sorry
+      map_update_add' := sorry
+      map_update_smul' := sorry
+      map_eq_zero_of_eq' := sorry }
+    1 sorry
+
+end ContinuousMultilinearMap
+
 namespace ContinuousAlternatingMap
 
 variable
@@ -58,3 +84,22 @@ def domDomCongr (σ : ι ≃ ι') (f : M [⋀^ι]→L[𝕜] N) : M [⋀^ι']→L
     map_eq_zero_of_eq' := fun v i j hv hij =>
       f.map_eq_zero_of_eq (v ∘ σ) (i := σ.symm i) (j := σ.symm j)
         (by simpa using hv) (σ.symm.injective.ne hij) }
+
+variable
+  {M' : Type*} [NormedAddCommGroup M'] [NormedSpace 𝕜 M']
+  [Fintype ι] [Fintype ι']
+
+def flipAlternating (f : M [⋀^ι]→L[𝕜] (M' [⋀^ι']→L[𝕜] N)) :
+    M' [⋀^ι']→L[𝕜] M [⋀^ι]→L[𝕜] N :=
+  AlternatingMap.mkContinuous
+    { toFun := fun m =>
+        AlternatingMap.mkContinuous
+          { toFun := fun m' => f m' m
+            map_update_add' := sorry
+            map_update_smul' := sorry
+            map_eq_zero_of_eq' := sorry }
+          1 sorry
+      map_update_add' := sorry
+      map_update_smul' := sorry
+      map_eq_zero_of_eq' := sorry }
+    1 sorry
