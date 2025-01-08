@@ -1,6 +1,7 @@
 import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 import DeRhamCohomology.ContinuousAlternatingMap.Curry
 import DeRhamCohomology.ContinuousAlternatingMap.FDeriv
+import DeRhamCohomology.ContinuousAlternatingMap.Wedge
 
 noncomputable section
 

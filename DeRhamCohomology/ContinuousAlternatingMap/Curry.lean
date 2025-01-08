@@ -4,9 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yury Kudryashov
 -/
 import Mathlib.Analysis.NormedSpace.Alternating.Basic
+import Mathlib.Analysis.NormedSpace.Multilinear.Curry
 import Mathlib.LinearAlgebra.Alternating.DomCoprod
 import DeRhamCohomology.AlternatingMap.Curry
-import DeRhamCohomology.Multilinear.Curry
 import DeRhamCohomology.Alternating.Basic
 
 noncomputable section
@@ -88,8 +88,9 @@ theorem uncurryFin_uncurryFinCLM_comp_of_symmetric {f : E →L[𝕜] E →L[𝕜
 
 variable [DecidableEq ι] [DecidableEq ι']
 
+#check ContinuousMultilinearMap.uncurrySum
+
 /-- summand used in `ContinuousAlternatingMap.uncurrySum` -/
--- Current try with separate inputs, to put together in uncurrySum
 def uncurrySum.summand (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) (σ : Equiv.Perm.ModSumCongr ι ι') :
     ContinuousMultilinearMap 𝕜 (fun _ : ι ⊕ ι' => E) F := sorry
   /- Want to be able to use a proof similar to below, but need `flip` -/
