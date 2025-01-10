@@ -1,4 +1,5 @@
 import Mathlib.Analysis.NormedSpace.Alternating.Basic
+import Mathlib.Analysis.NormedSpace.OperatorNorm.Mul
 import DeRhamCohomology.ContinuousAlternatingMap.Curry
 import DeRhamCohomology.Alternating.Basic
 
@@ -25,5 +26,10 @@ def wedge_product (g : M [⋀^Fin m]→L[𝕜] N) (h : M [⋀^Fin n]→L[𝕜] N
 
 -- TODO: change notation
 notation f "∧" "[" g "," h "]" => wedge_product g h f
+
+theorem wedge_product_def {g : M [⋀^Fin m]→L[𝕜] N} {h : M [⋀^Fin n]→L[𝕜] N'}
+    {f : N →L[𝕜] N' →L[𝕜] N''} {x : Fin (m + n) → M}:
+    (f ∧ [g, h]) x = uncurryFinAdd (f.compContinuousAlternatingMap₂ g h) x :=
+  rfl
 
 end wedge

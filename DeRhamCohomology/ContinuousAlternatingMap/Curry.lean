@@ -107,11 +107,13 @@ def uncurrySum.summand (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) (σ : 
       replace h := inv_mul_eq_iff_eq_mul.mp h.symm
       have : Equiv.Perm.sign (σ₁ * Equiv.Perm.sumCongrHom _ _ (sl, sr))
         = Equiv.Perm.sign σ₁ * (Equiv.Perm.sign sl * Equiv.Perm.sign sr) := by simp
-      rw [h, this, mul_smul, mul_smul, smul_left_cancel_iff /-, `smul apply commutate` -/ ]
-      -- simp [Sum.map_inr, Equiv.Perm.sumCongrHom_apply, Equiv.Perm.sumCongr_apply, Sum.map_inl,
-      --  Function.comp_apply, Equiv.Perm.coe_mul]
-      -- erw [← a.map_congr_perm fun i => v (σ₁ _), ← b.map_congr_perm fun i => v (σ₁ _)]
-      sorry
+      rw [h, this, mul_smul, mul_smul, smul_left_cancel_iff, smul_comm]
+      simp [ContinuousMultilinearMap.flipMultilinear]
+      erw [← (f.flipAlternating ((fun i ↦ v (σ₁ (Sum.map (⇑sl) (⇑sr) i))) ∘ Sum.inr)).map_congr_perm fun i => v (σ₁ _)]
+      simp [ContinuousAlternatingMap.flipAlternating]
+      erw [← (f fun i ↦ v (σ₁ (Sum.inl i))).map_congr_perm fun i => v (σ₁ _)]
+      simp [ContinuousMultilinearMap.flipAlternating]
+      rfl
 
 /-- Swapping elements in `σ` with equal values in `v` results in an addition that cancels -/
 theorem uncurrySum.summand_add_swap_smul_eq_zero (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F)
@@ -135,7 +137,6 @@ theorem uncurrySum.summand_eq_zero_of_smul_invariant (f : E [⋀^ι]→L[𝕜] E
     (σ : Equiv.Perm.ModSumCongr ι ι') {v : ι ⊕ ι' → E}
     {i j : ι ⊕ ι'} (hv : v i = v j) (hij : i ≠ j) :
     Equiv.swap i j • σ = σ → uncurrySum.summand f σ v = 0 := by
-  /- Want to use a proof similar to below, but need `uncurrySum.summand` first-/
   refine Quotient.inductionOn' σ fun σ => ?_
   dsimp only [Quotient.liftOn'_mk'', Quotient.map'_mk'', ContinuousMultilinearMap.smul_apply,
     ContinuousMultilinearMap.domDomCongr_apply, ContinuousMultilinearMap.uncurrySum_apply, uncurrySum.summand]
@@ -165,9 +166,9 @@ theorem uncurrySum.summand_eq_zero_of_smul_invariant (f : E [⋀^ι]→L[𝕜] E
   case inl.inl =>
     intro i' j' hv hij _
     convert smul_zero (M := ℤˣ) (A := F) _
-    /- Want to use something similar as below, but doesn't quite work... -/
-    -- exact ContinuousAlternatingMap.map_eq_zero_of_eq _ _ hv fun hij' => hij (hij' ▸ rfl)
-    sorry
+    simp [ContinuousMultilinearMap.flipMultilinear]
+    exact ContinuousAlternatingMap.map_eq_zero_of_eq ((f.flipAlternating ((fun i ↦ v (σ i)) ∘ Sum.inr))) _ hv
+      fun hij' => hij (hij' ▸ rfl)
 
 def uncurrySum (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) : E [⋀^ι ⊕ ι']→L[𝕜] F :=
     { ∑ σ : Equiv.Perm.ModSumCongr ι ι', uncurrySum.summand f σ with

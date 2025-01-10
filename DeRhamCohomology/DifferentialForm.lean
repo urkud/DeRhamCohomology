@@ -9,7 +9,7 @@ open Filter ContinuousAlternatingMap
 open scoped Topology
 
 variable {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-  [NormedAddCommGroup F] [NormedSpace ℝ F] {n : ℕ}
+  [NormedAddCommGroup F] [NormedSpace ℝ F] {n m : ℕ}
 
 -- TODO: change notation
 notation "Ω^" n "⟮" E ", " F "⟯" => E → E [⋀^Fin n]→L[ℝ] F
