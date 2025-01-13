@@ -32,4 +32,14 @@ theorem wedge_product_def {g : M [⋀^Fin m]→L[𝕜] N} {h : M [⋀^Fin n]→L
     (f ∧ [g, h]) x = uncurryFinAdd (f.compContinuousAlternatingMap₂ g h) x :=
   rfl
 
+/- The wedge product wrt multiplication -/
+theorem wedge_product_mul {g : M [⋀^Fin m]→L[𝕜] 𝕜} {h : M [⋀^Fin n]→L[𝕜] 𝕜} {x : Fin (m + n) → M} :
+    (ContinuousLinearMap.mul 𝕜 𝕜 ∧ [g, h]) x = uncurryFinAdd ((ContinuousLinearMap.mul 𝕜 𝕜).compContinuousAlternatingMap₂ g h) x :=
+  rfl
+
+/- The wedge product wrt scalar multiplication -/
+theorem wedge_product_lsmul {g : M [⋀^Fin m]→L[𝕜] 𝕜} {h : M [⋀^Fin n]→L[𝕜] N} {x : Fin (m + n) → M} :
+    (ContinuousLinearMap.lsmul 𝕜 𝕜 ∧ [g, h]) x = uncurryFinAdd ((ContinuousLinearMap.lsmul 𝕜 𝕜).compContinuousAlternatingMap₂ g h) x :=
+  rfl
+
 end wedge

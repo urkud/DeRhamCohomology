@@ -8,8 +8,11 @@ noncomputable section
 open Filter ContinuousAlternatingMap
 open scoped Topology
 
-variable {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-  [NormedAddCommGroup F] [NormedSpace ℝ F] {n m : ℕ}
+variable {E F F' F'' : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+  [NormedAddCommGroup F] [NormedSpace ℝ F]
+  [NormedAddCommGroup F'] [NormedSpace ℝ F']
+  [NormedAddCommGroup F''] [NormedSpace ℝ F'']
+  {n m : ℕ}
 
 -- TODO: change notation
 notation "Ω^" n "⟮" E ", " F "⟯" => E → E [⋀^Fin n]→L[ℝ] F
@@ -44,3 +47,24 @@ theorem ederiv_ederiv_apply (ω : Ω^n⟮E, F⟯) {x} (h : ContDiffAt ℝ 2 ω x
 
 theorem ederiv_ederiv (ω : Ω^n⟮E, F⟯) (h : ContDiff ℝ 2 ω) : ederiv (ederiv ω) = 0 :=
   funext fun _ ↦ ederiv_ederiv_apply ω h.contDiffAt
+
+/- Wedge product of differential forms -/
+def wedge_product (ω₁ : Ω^m⟮E, F⟯) (ω₂ : Ω^n⟮E, F'⟯) (f : F →L[ℝ] F' →L[ℝ] F'') :
+    Ω^(m + n)⟮E, F''⟯ := fun e => ContinuousAlternatingMap.wedge_product (ω₁ e) (ω₂ e) f
+
+-- TODO: change notation
+notation f "∧" "[" ω₁ "," ω₂ "]" => wedge_product ω₁ ω₂ f
+
+theorem wedge_product_def {ω₁ : Ω^m⟮E, F⟯} {ω₂ : Ω^n⟮E, F'⟯} {f : F →L[ℝ] F' →L[ℝ] F''}
+    {x : E} : (f ∧ [ω₁, ω₂]) x = ContinuousAlternatingMap.wedge_product (ω₁ x) (ω₂ x) f :=
+  rfl
+
+/- The wedge product wrt multiplication -/
+theorem wedge_product_mul {ω₁ : Ω^m⟮E, ℝ⟯} {ω₂ : Ω^n⟮E, ℝ⟯} {x : E} :
+    (ContinuousLinearMap.mul ℝ ℝ ∧ [ω₁, ω₂]) x = ContinuousAlternatingMap.wedge_product (ω₁ x) (ω₂ x) (ContinuousLinearMap.mul ℝ ℝ) :=
+  rfl
+
+/- The wedge product wrt scalar multiplication -/
+theorem wedge_product_lsmul {ω₁ : Ω^m⟮E, ℝ⟯} {ω₂ : Ω^n⟮E, F⟯} {x : E} :
+    (ContinuousLinearMap.lsmul ℝ ℝ ∧ [ω₁, ω₂]) x = ContinuousAlternatingMap.wedge_product (ω₁ x) (ω₂ x) (ContinuousLinearMap.lsmul ℝ ℝ) :=
+  rfl
