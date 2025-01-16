@@ -82,8 +82,6 @@ theorem uncurryFin_uncurryFinCLM_comp_of_symmetric {f : E →L[𝕜] E →L[𝕜
     Fin.succAbove_succAbove_predAbove, Fin.neg_one_pow_succAbove_add_predAbove, pow_succ',
     neg_one_mul, neg_smul, Fin.removeNth_apply, add_neg_cancel]
 
-lemma alt_norm_eq_norm_tocontMulti (f : E [⋀^Fin n]→L[𝕜] F) : ‖f‖ = ‖f.toContinuousMultilinearMap‖ := by simp? -- rfl
-
 /- Interior product -/
 def curryFin (f : E [⋀^Fin (n + 1)]→L[𝕜] F) : E →L[𝕜] E [⋀^Fin n]→L[𝕜] F :=
   LinearMap.mkContinuous
