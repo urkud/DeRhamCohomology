@@ -205,20 +205,20 @@ def wedge_product (ω₁ : Ω^m⟮E, F⟯) (ω₂ : Ω^n⟮E, F'⟯) (f : F →L
     Ω^(m + n)⟮E, F''⟯ := fun e => ContinuousAlternatingMap.wedge_product (ω₁ e) (ω₂ e) f
 
 -- TODO: change notation
-notation f "∧" "[" ω₁ "," ω₂ "]" => wedge_product ω₁ ω₂ f
+notation ω₁ "∧["f"]" ω₂ => wedge_product ω₁ ω₂ f
 
 theorem wedge_product_def {ω₁ : Ω^m⟮E, F⟯} {ω₂ : Ω^n⟮E, F'⟯} {f : F →L[ℝ] F' →L[ℝ] F''}
-    {x : E} : (f ∧ [ω₁, ω₂]) x = ContinuousAlternatingMap.wedge_product (ω₁ x) (ω₂ x) f :=
+    {x : E} : (ω₁ ∧[f] ω₂) x = ContinuousAlternatingMap.wedge_product (ω₁ x) (ω₂ x) f :=
   rfl
 
 /- The wedge product wrt multiplication -/
 theorem wedge_product_mul {ω₁ : Ω^m⟮E, ℝ⟯} {ω₂ : Ω^n⟮E, ℝ⟯} {x : E} :
-    (ContinuousLinearMap.mul ℝ ℝ ∧ [ω₁, ω₂]) x =
+    (ω₁ ∧[ContinuousLinearMap.mul ℝ ℝ] ω₂) x =
     ContinuousAlternatingMap.wedge_product (ω₁ x) (ω₂ x) (ContinuousLinearMap.mul ℝ ℝ) :=
   rfl
 
 /- The wedge product wrt scalar multiplication -/
 theorem wedge_product_lsmul {ω₁ : Ω^m⟮E, ℝ⟯} {ω₂ : Ω^n⟮E, F⟯} {x : E} :
-    (ContinuousLinearMap.lsmul ℝ ℝ ∧ [ω₁, ω₂]) x =
+    (ω₁ ∧[ContinuousLinearMap.lsmul ℝ ℝ] ω₂) x =
     ContinuousAlternatingMap.wedge_product (ω₁ x) (ω₂ x) (ContinuousLinearMap.lsmul ℝ ℝ) :=
   rfl
