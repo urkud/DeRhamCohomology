@@ -82,6 +82,8 @@ theorem uncurryFin_uncurryFinCLM_comp_of_symmetric {f : E →L[𝕜] E →L[𝕜
     Fin.succAbove_succAbove_predAbove, Fin.neg_one_pow_succAbove_add_predAbove, pow_succ',
     neg_one_mul, neg_smul, Fin.removeNth_apply, add_neg_cancel]
 
+lemma alt_norm_eq_norm_tocontMulti (f : E [⋀^Fin n]→L[𝕜] F) : ‖f‖ = ‖f.toContinuousMultilinearMap‖ := by simp? -- rfl
+
 /- Interior product -/
 def curryFin (f : E [⋀^Fin (n + 1)]→L[𝕜] F) : E →L[𝕜] E [⋀^Fin n]→L[𝕜] F :=
   LinearMap.mkContinuous
@@ -92,10 +94,11 @@ def curryFin (f : E [⋀^Fin (n + 1)]→L[𝕜] F) : E →L[𝕜] E [⋀^Fin n]�
       map_add' := fun x y => by ext; simp
       map_smul' := fun c x => by ext; simp }
     ‖f‖ fun x => by
-      rw [LinearMap.coe_mk, AddHom.coe_mk,
-          /- `ContinuousAlternatingMap.coe_mk` doesn't work here?? -/ ]
-      sorry
-      -- exact AlternatingMap.mkContinuous_norm_le _ (mul_nonneg (norm_nonneg _) (norm_nonneg _)) _
+      rw [LinearMap.coe_mk, AddHom.coe_mk, ← norm_toContinuousMultilinearMap]
+      dsimp
+      refine ContinuousLinearMap.le_of_opNorm_le f.curryLeft ?_ x
+      apply le_of_eq
+      exact ContinuousMultilinearMap.curryLeft_norm f.toContinuousMultilinearMap
 
 end Curry
 
