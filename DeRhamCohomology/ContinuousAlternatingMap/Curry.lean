@@ -82,6 +82,22 @@ theorem uncurryFin_uncurryFinCLM_comp_of_symmetric {f : E →L[𝕜] E →L[𝕜
     Fin.succAbove_succAbove_predAbove, Fin.neg_one_pow_succAbove_add_predAbove, pow_succ',
     neg_one_mul, neg_smul, Fin.removeNth_apply, add_neg_cancel]
 
+/- Interior product -/
+def curryFin (f : E [⋀^Fin (n + 1)]→L[𝕜] F) : E →L[𝕜] E [⋀^Fin n]→L[𝕜] F :=
+  LinearMap.mkContinuous
+    { toFun := fun x =>
+        { toContinuousMultilinearMap := f.1.curryLeft x
+          map_eq_zero_of_eq' := fun v i j hv hne ↦ by
+            apply f.map_eq_zero_of_eq (Fin.cons x v) (i := i.succ) (j := j.succ) <;> simpa }
+      map_add' := fun x y => by ext; simp
+      map_smul' := fun c x => by ext; simp }
+    ‖f‖ fun x => by
+      rw [LinearMap.coe_mk, AddHom.coe_mk, ← norm_toContinuousMultilinearMap]
+      dsimp
+      refine ContinuousLinearMap.le_of_opNorm_le f.curryLeft ?_ x
+      apply le_of_eq
+      exact ContinuousMultilinearMap.curryLeft_norm f.toContinuousMultilinearMap
+
 end Curry
 
 end ContinuousAlternatingMap
