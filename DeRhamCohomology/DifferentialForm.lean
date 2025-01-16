@@ -59,6 +59,18 @@ def constOfIsEmpty (x : F) : Ω^0⟮E, F⟯ :=
 def ederiv (ω : Ω^n⟮E, F⟯) : Ω^n + 1⟮E, F⟯ :=
   fun x ↦ .uncurryFin (fderiv ℝ ω x)
 
+theorem ederiv_add (ω₁ ω₂ : Ω^n⟮E, F⟯) {x : E} (hω₁ : DifferentiableAt ℝ ω₁ x)
+    (hω₂ : DifferentiableAt ℝ ω₂ x) : ederiv (ω₁ + ω₂) x = ederiv ω₁ x + ederiv ω₂ x := by
+  simp [ederiv, fderiv_add' hω₁ hω₂, uncurryFin_add]
+
+theorem ederiv_smul (ω : Ω^n⟮E, F⟯) (c : ℝ) {x : E} (hω : DifferentiableAt ℝ ω x):
+    ederiv (c • ω) x = c • ederiv ω x := by
+  simp [ederiv, fderiv_const_smul' hω, uncurryFin_smul]
+
+theorem ederiv_constOfIsEmpty (x : E) (y : F) :
+    ederiv (constOfIsEmpty y) x = .uncurryFin (fderiv ℝ (constOfIsEmpty y) x) :=
+  rfl
+
 theorem Filter.EventuallyEq.ederiv_eq {ω₁ ω₂ : Ω^n⟮E, F⟯} {x : E}
     (h : ω₁ =ᶠ[𝓝 x] ω₂) : ederiv ω₁ x = ederiv ω₂ x := by
   ext v
