@@ -49,11 +49,18 @@ theorem wedge_product_lsmul {g : M [⋀^Fin m]→L[𝕜] 𝕜} {h : M [⋀^Fin n
 /- Associativity of wedge product -/
 theorem wedge_assoc (g : M [⋀^Fin m]→L[𝕜] N) (h : M [⋀^Fin n]→L[𝕜] N) (f : N →L[𝕜] N →L[𝕜] N)
     (l : M [⋀^Fin p]→L[𝕜] N) (f' : N →L[𝕜] N →L[𝕜] N) :
-    ContinuousAlternatingMap.domDomCongr finAssoc.symm (g ∧[f] h ∧[f'] l) = ((g ∧[f] h) ∧[f'] l) := by sorry
+    ContinuousAlternatingMap.domDomCongr finAssoc.symm (g ∧[f] h ∧[f'] l) = ((g ∧[f] h) ∧[f'] l) := by
+  rw[wedge_product, ContinuousLinearMap.compContinuousAlternatingMap₂, uncurryFinAdd,
+    uncurrySum, ContinuousAlternatingMap.ext_iff]
+  intro x
+  sorry
 
 /- Left distributivity of wedge product -/
 theorem add_wedge (g₁ g₂ : M [⋀^Fin m]→L[𝕜] N) (h : M [⋀^Fin n]→L[𝕜] N') (f : N →L[𝕜] N' →L[𝕜] N'') :
-    ((g₁ + g₂) ∧[f] h) = (g₁ ∧[f] h) + (g₂ ∧[f] h) := by sorry
+    ((g₁ + g₂) ∧[f] h) = (g₁ ∧[f] h) + (g₂ ∧[f] h) := by
+  ext x
+  sorry
+
 
 /- Right distributivity of wedge product -/
 theorem wedge_add (g : M [⋀^Fin m]→L[𝕜] N) (h₁ h₂ : M [⋀^Fin n]→L[𝕜] N') (f : N →L[𝕜] N' →L[𝕜] N'') :

@@ -130,6 +130,13 @@ def uncurrySum.summand (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) (σ : 
       simp [ContinuousMultilinearMap.flipAlternating]
       rfl
 
+theorem uncurrySum.summand_mk'' (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) (σ : Equiv.Perm (ι ⊕ ι')) :
+    uncurrySum.summand f (Quotient.mk'' σ) = Equiv.Perm.sign σ •
+      (ContinuousMultilinearMap.uncurrySum
+        (f.toContinuousMultilinearMap.flipAlternating.toContinuousMultilinearMap.flipMultilinear) :
+          ContinuousMultilinearMap 𝕜 (fun _ => E) F).domDomCongr σ :=
+  rfl
+
 /-- Swapping elements in `σ` with equal values in `v` results in an addition that cancels -/
 theorem uncurrySum.summand_add_swap_smul_eq_zero (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F)
     (σ : Equiv.Perm.ModSumCongr ι ι') {v : ι ⊕ ι' → E}
@@ -197,6 +204,11 @@ def uncurrySum (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) : E [⋀^ι �
           (fun σ _ => mt <| uncurrySum.summand_eq_zero_of_smul_invariant f σ hv hij)
           (fun σ _ => Finset.mem_univ _) fun σ _ =>
           Equiv.swap_smul_involutive i j σ }
+
+theorem uncurrySum_coe (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) :
+    ((uncurrySum f).toContinuousMultilinearMap : ContinuousMultilinearMap 𝕜 (fun _ => E) F) =
+      ∑ σ : Equiv.Perm.ModSumCongr ι ι', uncurrySum.summand f σ :=
+  ContinuousMultilinearMap.ext fun _ => rfl
 
 def uncurryFinAdd (f : E [⋀^Fin m]→L[𝕜] E [⋀^Fin n]→L[𝕜] F) :
     E [⋀^Fin (m + n)]→L[𝕜] F :=
