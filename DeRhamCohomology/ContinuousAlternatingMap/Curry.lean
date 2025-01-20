@@ -210,6 +210,10 @@ theorem uncurrySum_coe (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) :
       ∑ σ : Equiv.Perm.ModSumCongr ι ι', uncurrySum.summand f σ :=
   ContinuousMultilinearMap.ext fun _ => rfl
 
+theorem uncurrySum_apply (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) (m : ι ⊕ ι' → E) :
+    uncurrySum f m = (∑ σ : Equiv.Perm.ModSumCongr ι ι', uncurrySum.summand f σ) m :=
+  rfl
+
 def uncurryFinAdd (f : E [⋀^Fin m]→L[𝕜] E [⋀^Fin n]→L[𝕜] F) :
     E [⋀^Fin (m + n)]→L[𝕜] F :=
   ContinuousAlternatingMap.domDomCongr finSumFinEquiv (uncurrySum f)
