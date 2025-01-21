@@ -168,6 +168,15 @@ theorem ederivWithin_ederivWithin (ω : Ω^n⟮E, F⟯) {s : Set E} {t : Set (E 
     EqOn (ederivWithin (ederivWithin ω s) s) 0 (s ∩ (closure (interior s))) :=
   fun _ ⟨ hx, hxx ⟩ => ederivWithin_ederivWithin_apply ω hxx hx hst (h.contDiffWithinAt hx) hs
 
+namespace DifferentialForm
+
+def domDomCongr (σ : Fin n ≃ Fin m) (ω : Ω^n⟮E, F⟯) : Ω^m⟮E, F⟯ :=
+  fun e => (ω e).domDomCongr σ
+
+theorem domDomCongr_apply (σ : Fin n ≃ Fin m) (ω : Ω^n⟮E, F⟯) (e : E) (v : Fin m → E):
+    (domDomCongr σ ω) e v = (ω e) (v ∘ σ)  :=
+  rfl
+
 /- Pullback of a differential form -/
 def pullback (f : E → F) (ω : Ω^k⟮F, G⟯) : Ω^k⟮E, G⟯ :=
   fun x ↦ (ω (f x)).compContinuousLinearMap (fderiv ℝ f x)
@@ -206,6 +215,7 @@ def wedge_product (ω₁ : Ω^m⟮E, F⟯) (ω₂ : Ω^n⟮E, F'⟯) (f : F →L
 
 -- TODO: change notation
 notation ω₁ "∧["f"]" ω₂ => wedge_product ω₁ ω₂ f
+notation ω₁ "∧" ω₂ => wedge_product ω₁ ω₂ (ContinuousLinearMap.mul ℝ ℝ)
 
 theorem wedge_product_def {ω₁ : Ω^m⟮E, F⟯} {ω₂ : Ω^n⟮E, F'⟯} {f : F →L[ℝ] F' →L[ℝ] F''}
     {x : E} : (ω₁ ∧[f] ω₂) x = ContinuousAlternatingMap.wedge_product (ω₁ x) (ω₂ x) f :=
@@ -222,3 +232,54 @@ theorem wedge_product_lsmul {ω₁ : Ω^m⟮E, ℝ⟯} {ω₂ : Ω^n⟮E, F⟯} 
     (ω₁ ∧[ContinuousLinearMap.lsmul ℝ ℝ] ω₂) x =
     ContinuousAlternatingMap.wedge_product (ω₁ x) (ω₂ x) (ContinuousLinearMap.lsmul ℝ ℝ) :=
   rfl
+
+/- Associativity of wedge product -/
+theorem wedge_assoc (ω₁ : Ω^m⟮E, F⟯) (ω₂ : Ω^n⟮E, F⟯) (f : F →L[ℝ] F →L[ℝ] F)
+    (ω₃ : Ω^k⟮E, F⟯) (f' : F →L[ℝ] F →L[ℝ] F) :
+    domDomCongr finAssoc.symm (ω₁ ∧[f] ω₂ ∧[f'] ω₃) = (ω₁ ∧[f] ω₂) ∧[f'] ω₃ := by
+  ext x y
+  rw[wedge_product_def, wedge_product_def, domDomCongr_apply, wedge_product_def, wedge_product_def,
+    ← ContinuousAlternatingMap.domDomCongr_apply]
+  exact ContinuousAlternatingMap.wedge_assoc (ω₁ x) (ω₂ x) f (ω₃ x) f' y
+
+/- Left distributivity of wedge product -/
+theorem add_wedge (ω₁ ω₂ : Ω^m⟮E, F⟯) (τ : Ω^n⟮E, F'⟯) (f : F →L[ℝ] F' →L[ℝ] F'') :
+    ((ω₁ + ω₂) ∧[f] τ) = (ω₁ ∧[f] τ) + (ω₂ ∧[f] τ) := by
+  ext1 x
+  rw[wedge_product_def, _root_.add_apply, _root_.add_apply, wedge_product_def, wedge_product_def]
+  exact ContinuousAlternatingMap.add_wedge (ω₁ x) (ω₂ x) (τ x) f
+
+/- Right distributivity of wedge product -/
+theorem wedge_add (ω : Ω^m⟮E, F⟯) (τ₁ τ₂ : Ω^n⟮E, F'⟯) (f : F →L[ℝ] F' →L[ℝ] F'') :
+    (ω ∧[f] (τ₁ + τ₂)) = (ω ∧[f] τ₁) + (ω ∧[f] τ₂) := by
+  ext1 x
+  rw[wedge_product_def, _root_.add_apply, _root_.add_apply, wedge_product_def, wedge_product_def]
+  exact ContinuousAlternatingMap.wedge_add (ω x) (τ₁ x) (τ₂ x) f
+
+theorem smul_wedge (ω : Ω^m⟮E, ℝ⟯) (τ : Ω^n⟮E, ℝ⟯) (c : ℝ) :
+    c • (ω ∧ τ) = (c • ω) ∧ τ := by
+  ext1 x
+  rw[_root_.smul_apply, wedge_product_mul, wedge_product_mul, _root_.smul_apply]
+  exact ContinuousAlternatingMap.smul_wedge (ω x) (τ x) c
+
+theorem wedge_smul (ω : Ω^m⟮E, ℝ⟯) (τ : Ω^n⟮E, ℝ⟯) (c : ℝ) :
+    c • (ω ∧ τ) = ω ∧ (c • τ) := by
+  ext1 x
+  rw[_root_.smul_apply, wedge_product_mul, wedge_product_mul, _root_.smul_apply]
+  exact ContinuousAlternatingMap.wedge_smul (ω x) (τ x) c
+
+/- Antisymmetry of multiplication wedge product -/
+theorem wedge_antisymm (ω : Ω^m⟮E, ℝ⟯) (τ : Ω^n⟮E, ℝ⟯) :
+    (ω ∧ τ) = DifferentialForm.domDomCongr finAddFlip ((-1 : ℝ)^(m*n) • (τ ∧ ω)) := by
+  ext x y
+  rw[wedge_product_mul, domDomCongr_apply, _root_.smul_apply,
+    wedge_product_mul, ← ContinuousAlternatingMap.domDomCongr_apply]
+  exact ContinuousAlternatingMap.wedge_antisymm (ω x) (τ x) y
+
+variable {M : Type*} [NormedAddCommGroup M] [NormedSpace ℝ M]
+
+theorem wedge_self_odd_zero (ω : Ω^m⟮E, ℝ⟯) (m_odd : Odd m) :
+    (ω ∧ ω) = 0 := by
+  ext1 x
+  rw[wedge_product_mul]
+  exact ContinuousAlternatingMap.wedge_self_odd_zero (ω x) m_odd

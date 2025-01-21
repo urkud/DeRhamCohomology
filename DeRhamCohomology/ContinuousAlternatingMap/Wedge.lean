@@ -50,11 +50,8 @@ theorem wedge_product_lsmul {g : M [⋀^Fin m]→L[𝕜] 𝕜} {h : M [⋀^Fin n
 
 /- Associativity of wedge product -/
 theorem wedge_assoc (g : M [⋀^Fin m]→L[𝕜] N) (h : M [⋀^Fin n]→L[𝕜] N) (f : N →L[𝕜] N →L[𝕜] N)
-    (l : M [⋀^Fin p]→L[𝕜] N) (f' : N →L[𝕜] N →L[𝕜] N) :
-    ContinuousAlternatingMap.domDomCongr finAssoc.symm (g ∧[f] h ∧[f'] l) = ((g ∧[f] h) ∧[f'] l) := by
-  rw[wedge_product, ContinuousLinearMap.compContinuousAlternatingMap₂, uncurryFinAdd,
-    uncurrySum, ContinuousAlternatingMap.ext_iff]
-  intro x
+    (l : M [⋀^Fin p]→L[𝕜] N) (f' : N →L[𝕜] N →L[𝕜] N) (v : Fin (m + n + p) → M):
+    ContinuousAlternatingMap.domDomCongr finAssoc.symm (g ∧[f] h ∧[f'] l) v = ((g ∧[f] h) ∧[f'] l) v := by
   sorry
 
 /- Left distributivity of wedge product -/
@@ -87,22 +84,22 @@ theorem wedge_smul (g : M [⋀^Fin m]→L[𝕜] 𝕜) (h : M [⋀^Fin n]→L[�
 
 /- Antisymmetry of multiplication wedge product -/
 theorem wedge_antisymm (g : M [⋀^Fin m]→L[𝕜] 𝕜) (h : M [⋀^Fin n]→L[𝕜] 𝕜) (x : Fin (m + n) → M) :
-    (g ∧[𝕜] h) x = domDomCongr finAddFlip ((-1)^(m*n) • (h ∧[𝕜] g)) x := by sorry
+    (g ∧[𝕜] h) x = ((-1 : 𝕜)^(m*n) • (h ∧[𝕜] g)).domDomCongr finAddFlip x := by sorry
 
-theorem wedge_self_odd_zero (g : M [⋀^Fin m]→L[𝕜] 𝕜) (m_odd : Odd m) :
-    (g ∧[𝕜] g) = 0 := by
+variable {M : Type*} [NormedAddCommGroup M] [NormedSpace ℝ M]
+
+theorem wedge_self_odd_zero (g : M [⋀^Fin m]→L[ℝ] ℝ) (m_odd : Odd m) :
+    (g ∧[ℝ] g) = 0 := by
   ext x
   let h := wedge_antisymm g g x
   rw[Odd.neg_one_pow (Odd.mul m_odd m_odd), domDomCongr_apply, smul_apply] at h
-  have h1 : (g∧[ContinuousLinearMap.mul 𝕜 𝕜]g) x =
-    (g∧[ContinuousLinearMap.mul 𝕜 𝕜]g) (x ∘ ⇑finAddFlip) := by sorry
-  rw[← h1] at h
-  simp only [coe_zero, Pi.zero_apply]
-  have h2 : 2 * (g∧[ContinuousLinearMap.mul 𝕜 𝕜]g) x = 0 := by sorry
-  apply mul_eq_zero.mp at h2
-  
-  #check Mathlib.Tactic.CC.or_eq_of_eq_false_left
-
-  sorry
+  have h1 : (g∧[ContinuousLinearMap.mul ℝ ℝ]g) x = (g∧[ContinuousLinearMap.mul ℝ ℝ]g) (x ∘ ⇑finAddFlip) := by
+    /- This is done by unpacking definition `including uncurrySum.summand` and seeing that because `g = g` that
+    a flip in arguments for `x` doesn't change the outcome. -/
+    sorry
+  rw[← h1, smul_eq_mul, neg_mul, one_mul] at h
+  apply sub_eq_zero_of_eq at h
+  rw[sub_neg_eq_add, add_self_eq_zero] at h
+  exact h
 
 end wedge
