@@ -16,3 +16,8 @@ variable {m n o: ℕ}
 def finAssoc {m n p : ℕ} : Fin (m + n + p) ≃ Fin (m + (n + p)) := by
   refine finCongr ?eq
   exact Nat.add_assoc m n p
+
+def finAddFlipAssoc {m n p : ℕ} : Fin (m + p + n) ≃ Fin (m + (n + p)) := by
+  refine finCongr ?eq
+  rw [Nat.add_right_comm]
+  exact Nat.add_assoc m n p

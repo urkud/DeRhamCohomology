@@ -2,6 +2,7 @@ import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 import DeRhamCohomology.ContinuousAlternatingMap.Curry
 import DeRhamCohomology.ContinuousAlternatingMap.FDeriv
 import DeRhamCohomology.ContinuousAlternatingMap.Wedge
+import DeRhamCohomology.Equiv.Fin
 
 noncomputable section
 
@@ -278,8 +279,25 @@ theorem wedge_antisymm (ω : Ω^m⟮E, ℝ⟯) (τ : Ω^n⟮E, ℝ⟯) :
 
 variable {M : Type*} [NormedAddCommGroup M] [NormedSpace ℝ M]
 
+/- Corollary of `wedge_antisymm` saying that a wedge of a m-form with itself is
+zero if m is odd. -/
 theorem wedge_self_odd_zero (ω : Ω^m⟮E, ℝ⟯) (m_odd : Odd m) :
     (ω ∧ ω) = 0 := by
   ext1 x
   rw[wedge_product_mul]
   exact ContinuousAlternatingMap.wedge_self_odd_zero (ω x) m_odd
+
+/- Pullback commutes with taking the wedge product -/
+theorem pullback_wedge (f : G → E) (ω₁ : Ω^m⟮E, F⟯) (ω₂ : Ω^n⟮E, F'⟯)
+    (f' : F →L[ℝ] F' →L[ℝ] F'') : pullback f (ω₁ ∧[f'] ω₂) = pullback f ω₁ ∧[f'] pullback f ω₂ := by
+  ext x y
+  rw[wedge_product_def, pullback, wedge_product_def, pullback, pullback, compContinuousLinearMap_apply]
+  /- Next step is to write split y over the wedge product using definitions wedge product and then rebuild
+  Need to be able to apply `uncurrySum.summand` for this! -/
+  sorry
+
+/- The graded Leibniz rule for the exterior derivative of the wedge product -/
+theorem ederiv_wedge (ω : Ω^m⟮E, F⟯) (τ : Ω^n⟮E, F'⟯) (f : F →L[ℝ] F' →L[ℝ] F'') :
+    ederiv (ω ∧[f] τ) = (domDomCongr finAddFlipAssoc (ederiv ω ∧[f] τ))
+      + ((-1 : ℝ)^m) • ((ω ∧[f] ederiv τ)) := by
+  sorry
