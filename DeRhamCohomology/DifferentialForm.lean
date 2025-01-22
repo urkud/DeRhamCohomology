@@ -292,12 +292,31 @@ theorem pullback_wedge (f : G → E) (ω₁ : Ω^m⟮E, F⟯) (ω₂ : Ω^n⟮E,
     (f' : F →L[ℝ] F' →L[ℝ] F'') : pullback f (ω₁ ∧[f'] ω₂) = pullback f ω₁ ∧[f'] pullback f ω₂ := by
   ext x y
   rw[wedge_product_def, pullback, wedge_product_def, pullback, pullback, compContinuousLinearMap_apply]
-  /- Next step is to write split y over the wedge product using definitions wedge product and then rebuild
-  Need to be able to apply `uncurrySum.summand` for this! -/
-  sorry
+  rw[ContinuousAlternatingMap.wedge_product_def, uncurryFinAdd, ContinuousAlternatingMap.domDomCongr_apply,
+    uncurrySum_apply, ContinuousAlternatingMap.wedge_product_def, uncurryFinAdd,
+    ContinuousAlternatingMap.domDomCongr_apply, uncurrySum_apply, ContinuousMultilinearMap.sum_apply,
+    ContinuousMultilinearMap.sum_apply]
+  apply Finset.sum_congr rfl
+  intro σ hσ
+  rcases σ with ⟨σ₁⟩
+  rw[uncurrySum.summand_mk]
+  rw[ContinuousMultilinearMap.smul_apply, ContinuousMultilinearMap.domDomCongr_apply,
+    ContinuousMultilinearMap.uncurrySum_apply, ContinuousMultilinearMap.flipMultilinear_apply,
+    coe_toContinuousMultilinearMap, ContinuousMultilinearMap.flipAlternating_apply,
+    coe_toContinuousMultilinearMap, ContinuousLinearMap.compContinuousAlternatingMap₂_apply]
+  rw[uncurrySum.summand_mk]
+  rw[ContinuousMultilinearMap.smul_apply, ContinuousMultilinearMap.domDomCongr_apply,
+    ContinuousMultilinearMap.uncurrySum_apply, ContinuousMultilinearMap.flipMultilinear_apply,
+    coe_toContinuousMultilinearMap, ContinuousMultilinearMap.flipAlternating_apply,
+    coe_toContinuousMultilinearMap, ContinuousLinearMap.compContinuousAlternatingMap₂_apply,
+    compContinuousLinearMap_apply, compContinuousLinearMap_apply]
+  simp only [Function.comp_apply, smul_left_cancel_iff]
+  rfl
 
 /- The graded Leibniz rule for the exterior derivative of the wedge product -/
 theorem ederiv_wedge (ω : Ω^m⟮E, F⟯) (τ : Ω^n⟮E, F'⟯) (f : F →L[ℝ] F' →L[ℝ] F'') :
     ederiv (ω ∧[f] τ) = (domDomCongr finAddFlipAssoc (ederiv ω ∧[f] τ))
       + ((-1 : ℝ)^m) • ((ω ∧[f] ederiv τ)) := by
+  ext x y
+  rw[_root_.add_apply, /- `ContinuousAlternatingMap.add_apply` doesn't work??? -/]
   sorry

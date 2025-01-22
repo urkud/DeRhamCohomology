@@ -56,6 +56,8 @@ theorem wedge_assoc (g : M [⋀^Fin m]→L[𝕜] N) (h : M [⋀^Fin n]→L[𝕜]
     ContinuousMultilinearMap.sum_apply, wedge_product_def, uncurryFinAdd, domDomCongr_apply,
     uncurrySum_apply, ContinuousMultilinearMap.sum_apply]
   rw[wedge_product, wedge_product]
+  /- We want to unpack `uncurryFinAdd` and then `uncurrySum`, but cannot use `uncurrySum_apply` without
+  removing the sum first, but we cannot and do not want to do this... ? -/
   sorry
 
 /- Left distributivity of wedge product -/
@@ -152,18 +154,20 @@ theorem wedge_antisymm (g : M [⋀^Fin m]→L[𝕜] 𝕜) (h : M [⋀^Fin n]→L
   rw[domDomCongr_apply, smul_apply, wedge_product_mul, uncurryFinAdd, domDomCongr_apply,
     uncurrySum_apply, ContinuousMultilinearMap.sum_apply, wedge_product_mul,
     uncurryFinAdd, domDomCongr_apply, uncurrySum_apply, ContinuousMultilinearMap.sum_apply]
+  /- We cannot apply `uncurrySum.summand` until we have removed the sums
+  How do we equalise the sums using `finAddFlip`?? -/
   sorry
 
 variable {M : Type*} [NormedAddCommGroup M] [NormedSpace ℝ M]
 
+/- Corollary of `wedge_antisymm` saying that a wedge of g with itself is
+zero if m is odd. -/
 theorem wedge_self_odd_zero (g : M [⋀^Fin m]→L[ℝ] ℝ) (m_odd : Odd m) :
     (g ∧[ℝ] g) = 0 := by
   ext x
   let h := wedge_antisymm g g x
   rw[Odd.neg_one_pow (Odd.mul m_odd m_odd), domDomCongr_apply, smul_apply] at h
   have h1 : (g∧[ContinuousLinearMap.mul ℝ ℝ]g) x = (g∧[ContinuousLinearMap.mul ℝ ℝ]g) (x ∘ ⇑finAddFlip) := by
-    /- This is done by unpacking definition `including uncurrySum.summand` and seeing that because `g = g` that
-    a flip in arguments for `x` doesn't change the outcome. -/
     rw[wedge_product_mul, uncurryFinAdd, domDomCongr_apply, uncurrySum_apply, ContinuousMultilinearMap.sum_apply,
       wedge_product_mul, uncurryFinAdd, domDomCongr_apply, uncurrySum_apply, ContinuousMultilinearMap.sum_apply]
     apply Finset.sum_congr rfl
@@ -181,6 +185,7 @@ theorem wedge_self_odd_zero (g : M [⋀^Fin m]→L[ℝ] ℝ) (m_odd : Odd m) :
       coe_toContinuousMultilinearMap, ContinuousLinearMap.compContinuousAlternatingMap₂_apply,
       ContinuousLinearMap.mul_apply']
     simp only [smul_left_cancel_iff]
+    /- We want to remove `finAddFlip` from this equation by essentially swapping `Sum.inl` and `Sum.inr` how? -/
     sorry
   rw[← h1, smul_eq_mul, neg_mul, one_mul] at h
   apply sub_eq_zero_of_eq at h
