@@ -71,7 +71,22 @@ theorem smul_wedge (g : M [⋀^Fin m]→L[𝕜] 𝕜) (h : M [⋀^Fin n]→L[�
     ContinuousMultilinearMap.sum_apply, Finset.smul_sum]
   rw[wedge_product_def, uncurryFinAdd, domDomCongr_apply, uncurrySum_apply,
     ContinuousMultilinearMap.sum_apply]
-  sorry
+  apply Finset.sum_congr rfl
+  intro σ hσ
+  rcases σ with ⟨σ₁⟩
+  rw[uncurrySum.summand_mk]
+  simp only [ContinuousMultilinearMap.smul_apply, ContinuousMultilinearMap.domDomCongr_apply,
+    Function.comp_apply, ContinuousMultilinearMap.uncurrySum_apply, ContinuousMultilinearMap.flipMultilinear_apply,
+    coe_toContinuousMultilinearMap, ContinuousMultilinearMap.flipAlternating_apply,
+    ContinuousLinearMap.compContinuousAlternatingMap₂_apply, ContinuousLinearMap.mul_apply', ← smul_assoc,
+    smul_comm]
+  rw[smul_assoc, smul_eq_mul, ← mul_assoc]
+  rw[uncurrySum.summand_mk]
+  simp only [ContinuousMultilinearMap.smul_apply, ContinuousMultilinearMap.domDomCongr_apply,
+    Function.comp_apply, ContinuousMultilinearMap.uncurrySum_apply, ContinuousMultilinearMap.flipMultilinear_apply,
+    coe_toContinuousMultilinearMap, ContinuousMultilinearMap.flipAlternating_apply,
+    ContinuousLinearMap.compContinuousAlternatingMap₂_apply, ContinuousLinearMap.mul_apply', ← smul_assoc,
+    smul_comm, smul_apply, smul_eq_mul]
 
 theorem wedge_smul (g : M [⋀^Fin m]→L[𝕜] 𝕜) (h : M [⋀^Fin n]→L[𝕜] 𝕜) (c : 𝕜) :
     c • (g ∧[𝕜] h) = g ∧[𝕜] (c • h) := by

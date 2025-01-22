@@ -130,6 +130,14 @@ def uncurrySum.summand (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) (σ : 
       simp [ContinuousMultilinearMap.flipAlternating]
       rfl
 
+theorem uncurrySum.summand_mk (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) (σ : Equiv.Perm (ι ⊕ ι')) :
+    uncurrySum.summand f (Quot.mk
+      (⇑(QuotientGroup.leftRel (Equiv.Perm.sumCongrHom ι ι').range)) σ) = Equiv.Perm.sign σ •
+        (ContinuousMultilinearMap.uncurrySum
+          (f.toContinuousMultilinearMap.flipAlternating.toContinuousMultilinearMap.flipMultilinear) :
+            ContinuousMultilinearMap 𝕜 (fun _ => E) F).domDomCongr σ :=
+  rfl
+
 theorem uncurrySum.summand_mk'' (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) (σ : Equiv.Perm (ι ⊕ ι')) :
     uncurrySum.summand f (Quotient.mk'' σ) = Equiv.Perm.sign σ •
       (ContinuousMultilinearMap.uncurrySum

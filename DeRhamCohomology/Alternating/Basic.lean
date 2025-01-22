@@ -78,6 +78,10 @@ def flipAlternating (f : ContinuousMultilinearMap 𝕜 (fun _ : ι ↦ M) (M' [�
       map_eq_zero_of_eq' := sorry }
     1 sorry
 
+theorem flipAlternating_apply (f : ContinuousMultilinearMap 𝕜 (fun _ : ι ↦ M) (M' [⋀^ι']→L[𝕜] N))
+    (m : ι → M) (m' : ι' → M') : flipAlternating f m' m = f m m' :=
+  rfl
+
 end ContinuousMultilinearMap
 
 namespace ContinuousAlternatingMap
