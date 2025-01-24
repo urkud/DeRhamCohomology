@@ -102,6 +102,21 @@ def curryFin (f : E [⋀^Fin (n + 1)]→L[𝕜] F) : E →L[𝕜] E [⋀^Fin n]�
       apply le_of_eq
       exact ContinuousMultilinearMap.curryLeft_norm f.toContinuousMultilinearMap
 
+theorem curryFin_apply (f : E [⋀^Fin (n + 1)]→L[𝕜] F) (x : E) (m : Fin n → E) :
+    curryFin f x m = f (Fin.cons x m) :=
+  rfl
+
+theorem curryFin_add (f g : E [⋀^Fin (n + 1)]→L[𝕜] F) :
+    curryFin (f + g) = curryFin f + curryFin g := by
+  ext e v
+  simp [curryFin_apply]
+
+theorem curryFin_smul {M : Type*} [Monoid M] [DistribMulAction M F] [ContinuousConstSMul M F]
+    [SMulCommClass 𝕜 M F] (c : M) (f : E [⋀^Fin (n + 1)]→L[𝕜] F) :
+    curryFin (c • f) = c • curryFin f := by
+  ext e v
+  simp [curryFin_apply]
+
 variable [DecidableEq ι] [DecidableEq ι']
 
 /-- summand used in `ContinuousAlternatingMap.uncurrySum` -/
