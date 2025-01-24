@@ -211,8 +211,21 @@ theorem pullback_constOfIsEmpty (f : E → F) (g : G) :
   rfl
 
 /- Interior product of differential forms -/
-def iprod (ω : Ω^(m + 1)⟮E, F⟯) (v : E → E) : Ω^m⟮E, F⟯ :=
+def iprod (ω : Ω^m + 1⟮E, F⟯) (v : E → E) : Ω^m⟮E, F⟯ :=
     fun e => ContinuousAlternatingMap.curryFin (ω e) (v e)
+
+/- Interior product is antisymmetric -/
+theorem iprod_antisymm (ω : Ω^m + 2⟮E, ℝ⟯) (v w : E → E) (e : E) (m' : Fin m → E) :
+    iprod (iprod ω v) w e m' = - iprod (iprod ω w) v e m' := by
+  sorry
+
+/- Interior product with twice the same vector field is zero -/
+theorem iprod_iprod (ω : Ω^m + 2⟮E, ℝ⟯) (v : E → E) :
+    iprod (iprod ω v) v = 0 := by
+  ext e m'
+  let h := iprod_antisymm ω v v e m'
+  rw [eq_neg_iff_add_eq_zero, add_self_eq_zero] at h
+  exact h
 
 /- Wedge product of differential forms -/
 def wedge_product (ω₁ : Ω^m⟮E, F⟯) (ω₂ : Ω^n⟮E, F'⟯) (f : F →L[ℝ] F' →L[ℝ] F'') :
@@ -323,4 +336,10 @@ theorem ederiv_wedge (ω : Ω^m⟮E, F⟯) (τ : Ω^n⟮E, F'⟯) (f : F →L[�
       + ((-1 : ℝ)^m) • ((ω ∧[f] ederiv τ)) := by
   ext x y
   rw[_root_.add_apply, /- `ContinuousAlternatingMap.add_apply` doesn't work??? -/]
+  sorry
+
+/- The graded Leibniz rule for the interior product of the wedge product -/
+theorem iprod_wedge (ω : Ω^m + 1⟮E, F⟯) (τ : Ω^n + 1⟮E, F'⟯) (f : F →L[ℝ] F' →L[ℝ] F'') (v : E → E) :
+    iprod (domDomCongr finAddFlipAssoc (ω ∧[f] τ)) v = ((iprod ω v) ∧[f] τ)
+      + (-1)^m • (domDomCongr finAddFlipAssoc (ω ∧[f] (iprod τ v))) := by
   sorry
