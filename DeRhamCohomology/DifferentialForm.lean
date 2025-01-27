@@ -214,9 +214,17 @@ theorem pullback_constOfIsEmpty (f : E → F) (g : G) :
 def iprod (ω : Ω^m + 1⟮E, F⟯) (v : E → E) : Ω^m⟮E, F⟯ :=
     fun e => ContinuousAlternatingMap.curryFin (ω e) (v e)
 
+theorem iprod_apply (ω : Ω^m + 1⟮E, F⟯) (v : E → E) (e : E) :
+    iprod ω v e = ContinuousAlternatingMap.curryFin (ω e) (v e) :=
+  rfl
+
 /- Interior product is antisymmetric -/
 theorem iprod_antisymm (ω : Ω^m + 2⟮E, ℝ⟯) (v w : E → E) (e : E) (m' : Fin m → E) :
     iprod (iprod ω v) w e m' = - iprod (iprod ω w) v e m' := by
+  repeat
+    rw[iprod_apply, curryFin_apply]
+  let h := AlternatingMap.map_swap (ω e).toAlternatingMap (Fin.cons (v e) (Fin.cons (w e) m')) Fin.zero_ne_one
+  rw [@coe_toAlternatingMap] at h
   sorry
 
 /- Interior product with twice the same vector field is zero -/
@@ -342,4 +350,21 @@ theorem ederiv_wedge (ω : Ω^m⟮E, F⟯) (τ : Ω^n⟮E, F'⟯) (f : F →L[�
 theorem iprod_wedge (ω : Ω^m + 1⟮E, F⟯) (τ : Ω^n + 1⟮E, F'⟯) (f : F →L[ℝ] F' →L[ℝ] F'') (v : E → E) :
     iprod (domDomCongr finAddFlipAssoc (ω ∧[f] τ)) v = ((iprod ω v) ∧[f] τ)
       + (-1)^m • (domDomCongr finAddFlipAssoc (ω ∧[f] (iprod τ v))) := by
+  ext e x
+  rw [_root_.add_apply]
+  sorry
+
+/- Exterior derivative commutes with pullback -/
+theorem pullback_ederiv (f : E → F) (ω : Ω^n⟮F, G⟯) {x : E} (hf : DifferentiableAt ℝ f x)
+    (hω : DifferentiableAt ℝ ω (f x)) : pullback f (ederiv ω) x = ederiv (pullback f ω) x := by
+  ext v
+  rw[pullback, ederiv, ContinuousAlternatingMap.compContinuousLinearMap_apply,
+    uncurryFin_apply, ederiv, uncurryFin_apply]
+  apply Finset.sum_congr rfl
+  intro p q
+  refine Mathlib.Tactic.LinearCombination.smul_const_eq ?H.p ((-1) ^ (p : ℕ))
+  simp only [Function.comp_apply]
+  rw [← ContinuousLinearMap.comp_apply, ← fderiv_comp x hω hf]
+  /- Here, I'd want to unpack `pullback`, but I need some lemma telling me what the
+  `fderiv of pullback` is -/
   sorry
