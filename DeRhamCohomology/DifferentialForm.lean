@@ -1,15 +1,19 @@
 import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 import DeRhamCohomology.ContinuousAlternatingMap.Curry
 import DeRhamCohomology.ContinuousAlternatingMap.FDeriv
+import DeRhamCohomology.ContinuousAlternatingMap.Wedge
 
 noncomputable section
 
 open Filter ContinuousAlternatingMap Set
 open scoped Topology
 
-variable {E F G : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+variable {E F F' F'' G : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   [NormedAddCommGroup F] [NormedSpace ℝ F]
-  [NormedAddCommGroup G] [NormedSpace ℝ G] {n k : ℕ}
+  [NormedAddCommGroup F'] [NormedSpace ℝ F']
+  [NormedAddCommGroup F''] [NormedSpace ℝ F'']
+  [NormedAddCommGroup G] [NormedSpace ℝ G]
+  {n m k : ℕ}
 
 -- TODO: change notation
 notation "Ω^" n "⟮" E ", " F "⟯" => E → E [⋀^Fin n]→L[ℝ] F
@@ -194,4 +198,27 @@ theorem pullback_ofSubsingleton (f : E → F) (ω : F → F →L[ℝ] G) :
 
 theorem pullback_constOfIsEmpty (f : E → F) (g : G) :
     pullback f (constOfIsEmpty g) = fun _ ↦ (ContinuousAlternatingMap.constOfIsEmpty ℝ E (Fin 0) g) :=
+  rfl
+
+/- Wedge product of differential forms -/
+def wedge_product (ω₁ : Ω^m⟮E, F⟯) (ω₂ : Ω^n⟮E, F'⟯) (f : F →L[ℝ] F' →L[ℝ] F'') :
+    Ω^(m + n)⟮E, F''⟯ := fun e => ContinuousAlternatingMap.wedge_product (ω₁ e) (ω₂ e) f
+
+-- TODO: change notation
+notation ω₁ "∧["f"]" ω₂ => wedge_product ω₁ ω₂ f
+
+theorem wedge_product_def {ω₁ : Ω^m⟮E, F⟯} {ω₂ : Ω^n⟮E, F'⟯} {f : F →L[ℝ] F' →L[ℝ] F''}
+    {x : E} : (ω₁ ∧[f] ω₂) x = ContinuousAlternatingMap.wedge_product (ω₁ x) (ω₂ x) f :=
+  rfl
+
+/- The wedge product wrt multiplication -/
+theorem wedge_product_mul {ω₁ : Ω^m⟮E, ℝ⟯} {ω₂ : Ω^n⟮E, ℝ⟯} {x : E} :
+    (ω₁ ∧[ContinuousLinearMap.mul ℝ ℝ] ω₂) x =
+    ContinuousAlternatingMap.wedge_product (ω₁ x) (ω₂ x) (ContinuousLinearMap.mul ℝ ℝ) :=
+  rfl
+
+/- The wedge product wrt scalar multiplication -/
+theorem wedge_product_lsmul {ω₁ : Ω^m⟮E, ℝ⟯} {ω₂ : Ω^n⟮E, F⟯} {x : E} :
+    (ω₁ ∧[ContinuousLinearMap.lsmul ℝ ℝ] ω₂) x =
+    ContinuousAlternatingMap.wedge_product (ω₁ x) (ω₂ x) (ContinuousLinearMap.lsmul ℝ ℝ) :=
   rfl
