@@ -59,45 +59,6 @@ def constOfIsEmpty (x : F) : Ω^0⟮E, F⟯ :=
 def ederiv (ω : Ω^n⟮E, F⟯) : Ω^n + 1⟮E, F⟯ :=
   fun x ↦ .uncurryFin (fderiv ℝ ω x)
 
-theorem ederiv_add (ω₁ ω₂ : Ω^n⟮E, F⟯) {x : E} (hω₁ : DifferentiableAt ℝ ω₁ x)
-    (hω₂ : DifferentiableAt ℝ ω₂ x) : ederiv (ω₁ + ω₂) x = ederiv ω₁ x + ederiv ω₂ x := by
-  simp [ederiv, fderiv_add' hω₁ hω₂, uncurryFin_add]
-
-theorem ederiv_smul (ω : Ω^n⟮E, F⟯) (c : ℝ) {x : E} (hω : DifferentiableAt ℝ ω x):
-    ederiv (c • ω) x = c • ederiv ω x := by
-  simp [ederiv, fderiv_const_smul' hω, uncurryFin_smul]
-
-theorem ederiv_constOfIsEmpty (x : E) (y : F) :
-    ederiv (constOfIsEmpty y) x = .uncurryFin (fderiv ℝ (constOfIsEmpty y) x) :=
-  rfl
-
-theorem Filter.EventuallyEq.ederiv_eq {ω₁ ω₂ : Ω^n⟮E, F⟯} {x : E}
-    (h : ω₁ =ᶠ[𝓝 x] ω₂) : ederiv ω₁ x = ederiv ω₂ x := by
-  ext v
-  simp only [ederiv, ContinuousAlternatingMap.uncurryFin_apply, h.fderiv_eq]
-
-protected theorem Filter.EventuallyEq.ederiv {ω₁ ω₂ : Ω^n⟮E, F⟯} {x : E}
-    (h : ω₁ =ᶠ[𝓝 x] ω₂) : ederiv ω₁ =ᶠ[𝓝 x] ederiv ω₂ :=
-  h.eventuallyEq_nhds.mono fun _x hx ↦ hx.ederiv_eq
-
-theorem ederiv_apply (ω : Ω^n⟮E, F⟯) {x : E} (hx : DifferentiableAt ℝ ω x) (v : Fin (n + 1) → E) :
-    ederiv ω x v = ∑ i, (-1) ^ i.val • fderiv ℝ (ω · (i.removeNth v)) x (v i) := by
-  simp only [ederiv, ContinuousAlternatingMap.uncurryFin_apply,
-    ContinuousAlternatingMap.fderiv_apply hx]
-
-theorem ederiv_ederiv_apply (ω : Ω^n⟮E, F⟯) {x} (h : ContDiffAt ℝ 2 ω x) :
-    ederiv (ederiv ω) x = 0 := calc
-  ederiv (ederiv ω) x = uncurryFin (fderiv ℝ (fun y ↦ uncurryFin (fderiv ℝ ω y)) x) := rfl
-  _ = uncurryFin (uncurryFinCLM.comp <| fderiv ℝ (fderiv ℝ ω) x) := by
-    congr 1
-    have : DifferentiableAt ℝ (fderiv ℝ ω) x := (h.fderiv_right le_rfl).differentiableAt le_rfl
-    exact (uncurryFinCLM.hasFDerivAt.comp x this.hasFDerivAt).fderiv
-  _ = 0 :=
-    uncurryFin_uncurryFinCLM_comp_of_symmetric <| h.isSymmSndFDerivAt le_rfl
-
-theorem ederiv_ederiv (ω : Ω^n⟮E, F⟯) (h : ContDiff ℝ 2 ω) : ederiv (ederiv ω) = 0 :=
-  funext fun _ ↦ ederiv_ederiv_apply ω h.contDiffAt
-
 /- Exterior derivative of a differential form within a set -/
 def ederivWithin (ω : Ω^n⟮E, F⟯) (s : Set E) : Ω^n + 1⟮E, F⟯ :=
   fun (x : E) ↦ .uncurryFin (fderivWithin ℝ ω s x)
@@ -107,6 +68,19 @@ theorem ederivWithin_univ (ω : Ω^n⟮E, F⟯) :
     ederivWithin ω univ = ederiv ω := by
   ext1 x
   rw[ederivWithin, ederiv, fderivWithin_univ]
+
+theorem ederivWithin_add (ω₁ ω₂ : Ω^n⟮E, F⟯) (s : Set E) {x : E} (hsx : UniqueDiffWithinAt ℝ s x)
+    (hω₁ : DifferentiableWithinAt ℝ ω₁ s x) (hω₂ : DifferentiableWithinAt ℝ ω₂ s x) :
+    ederivWithin (ω₁ + ω₂) s x = ederivWithin ω₁ s x + ederivWithin ω₂ s x := by
+  simp [ederivWithin, fderivWithin_add' hsx hω₁ hω₂, uncurryFin_add]
+
+theorem ederivWithin_smul (ω : Ω^n⟮E, F⟯) (c : ℝ) (s : Set E) {x : E} (hsx : UniqueDiffWithinAt ℝ s x)
+    (hω : DifferentiableWithinAt ℝ ω s x): ederivWithin (c • ω) s x = c • ederivWithin ω s x := by
+  simp [ederivWithin, fderivWithin_const_smul' hsx hω, uncurryFin_smul]
+
+theorem ederivWithin_constOfIsEmpty (s : Set E) (x : E) (y : F) :
+    ederivWithin (constOfIsEmpty y) s x = .uncurryFin (fderivWithin ℝ (constOfIsEmpty y) s x) :=
+  rfl
 
 theorem Filter.EventuallyEq.ederivWithin_eq {ω₁ ω₂ : Ω^n⟮E, F⟯} {s : Set E} {x : E}
     (hs : ω₁ =ᶠ[𝓝[s] x] ω₂) (hx : ω₁ x = ω₂ x) : ederivWithin ω₁ s x = ederivWithin ω₂ s x := by
@@ -168,9 +142,86 @@ theorem ederivWithin_ederivWithin (ω : Ω^n⟮E, F⟯) {s : Set E} {t : Set (E 
     EqOn (ederivWithin (ederivWithin ω s) s) 0 (s ∩ (closure (interior s))) :=
   fun _ ⟨ hx, hxx ⟩ => ederivWithin_ederivWithin_apply ω hxx hx hst (h.contDiffWithinAt hx) hs
 
-/- Pullback of a differential form -/
+theorem ederiv_add (ω₁ ω₂ : Ω^n⟮E, F⟯) {x : E} (hω₁ : DifferentiableAt ℝ ω₁ x)
+    (hω₂ : DifferentiableAt ℝ ω₂ x) : ederiv (ω₁ + ω₂) x = ederiv ω₁ x + ederiv ω₂ x := by
+  simp [ederiv, fderiv_add' hω₁ hω₂, uncurryFin_add]
+
+theorem ederiv_smul (ω : Ω^n⟮E, F⟯) (c : ℝ) {x : E} (hω : DifferentiableAt ℝ ω x):
+    ederiv (c • ω) x = c • ederiv ω x := by
+  simp [ederiv, fderiv_const_smul' hω, uncurryFin_smul]
+
+theorem ederiv_constOfIsEmpty (x : E) (y : F) :
+    ederiv (constOfIsEmpty y) x = .uncurryFin (fderiv ℝ (constOfIsEmpty y) x) :=
+  rfl
+
+theorem Filter.EventuallyEq.ederiv_eq {ω₁ ω₂ : Ω^n⟮E, F⟯} {x : E}
+    (h : ω₁ =ᶠ[𝓝 x] ω₂) : ederiv ω₁ x = ederiv ω₂ x := by
+  ext v
+  simp only [ederiv, ContinuousAlternatingMap.uncurryFin_apply, h.fderiv_eq]
+
+protected theorem Filter.EventuallyEq.ederiv {ω₁ ω₂ : Ω^n⟮E, F⟯} {x : E}
+    (h : ω₁ =ᶠ[𝓝 x] ω₂) : ederiv ω₁ =ᶠ[𝓝 x] ederiv ω₂ :=
+  h.eventuallyEq_nhds.mono fun _x hx ↦ hx.ederiv_eq
+
+theorem ederiv_apply (ω : Ω^n⟮E, F⟯) {x : E} (hx : DifferentiableAt ℝ ω x) (v : Fin (n + 1) → E) :
+    ederiv ω x v = ∑ i, (-1) ^ i.val • fderiv ℝ (ω · (i.removeNth v)) x (v i) := by
+  simp only [ederiv, ContinuousAlternatingMap.uncurryFin_apply,
+    ContinuousAlternatingMap.fderiv_apply hx]
+
+theorem ederiv_ederiv_apply (ω : Ω^n⟮E, F⟯) {x} (h : ContDiffAt ℝ 2 ω x) :
+    ederiv (ederiv ω) x = 0 := calc
+  ederiv (ederiv ω) x = uncurryFin (fderiv ℝ (fun y ↦ uncurryFin (fderiv ℝ ω y)) x) := rfl
+  _ = uncurryFin (uncurryFinCLM.comp <| fderiv ℝ (fderiv ℝ ω) x) := by
+    congr 1
+    have : DifferentiableAt ℝ (fderiv ℝ ω) x := (h.fderiv_right le_rfl).differentiableAt le_rfl
+    exact (uncurryFinCLM.hasFDerivAt.comp x this.hasFDerivAt).fderiv
+  _ = 0 :=
+    uncurryFin_uncurryFinCLM_comp_of_symmetric <| h.isSymmSndFDerivAt le_rfl
+
+theorem ederiv_ederiv (ω : Ω^n⟮E, F⟯) (h : ContDiff ℝ 2 ω) : ederiv (ederiv ω) = 0 :=
+  funext fun _ ↦ ederiv_ederiv_apply ω h.contDiffAt
+
+/- Pullback of a form under a function -/
 def pullback (f : E → F) (ω : Ω^k⟮F, G⟯) : Ω^k⟮E, G⟯ :=
-  fun x ↦ (ω (f x)).compContinuousLinearMap (fderiv ℝ f x)
+    fun x ↦ (ω (f x)).compContinuousLinearMap (fderiv ℝ f x)
+
+/- Pullback within a set of form under a function -/
+def pullbackWithin (f : E → F) (ω : Ω^k⟮F, G⟯) (s : Set E) : Ω^k⟮E, G⟯ :=
+    fun x ↦ (ω (f x)).compContinuousLinearMap (fderivWithin ℝ f s x)
+
+@[simp]
+lemma pullbackWithin_univ {f : E → F} {ω : Ω^k⟮F, G⟯} :
+    pullbackWithin f ω univ = pullback f ω := by
+  ext x v
+  simp [pullbackWithin, pullback]
+
+theorem pullbackWithin_zero (f : E → F) (s : Set E):
+    pullbackWithin f (0 : Ω^k⟮F, G⟯) s = 0 :=
+  rfl
+
+theorem pullbackWithin_add (f : E → F) (ω : Ω^k⟮F, G⟯) (τ : Ω^k⟮F, G⟯) (s : Set E) :
+    pullbackWithin f (ω + τ) s = pullbackWithin f ω s + pullbackWithin f τ s :=
+  rfl
+
+theorem pullbackWithin_sub (f : E → F) (ω : Ω^k⟮F, G⟯) (τ : Ω^k⟮F, G⟯) (s : Set E) :
+    pullbackWithin f (ω - τ) s = pullbackWithin f ω s - pullbackWithin f τ s :=
+  rfl
+
+theorem pullbackWithin_neg (f : E → F) (ω : Ω^k⟮F, G⟯) (s : Set E) :
+    - pullbackWithin f ω s = pullbackWithin f (-ω) s :=
+  rfl
+
+theorem pullbackWithin_smul (f : E → F) (ω : Ω^k⟮F, G⟯) (c : ℝ) (s : Set E) :
+    c • (pullbackWithin f ω s) = pullbackWithin f (c • ω) s :=
+  rfl
+
+theorem pullbackWithin_ofSubsingleton (f : E → F) (ω : F → F →L[ℝ] G) (s : Set E) :
+    pullbackWithin f (ofSubsingleton ω) s = ofSubsingleton (fun e ↦ (ω (f e)).comp (fderivWithin ℝ f s e)) :=
+  rfl
+
+theorem pullbackWithin_constOfIsEmpty (f : E → F) (g : G) (s : Set E) :
+    pullbackWithin f (constOfIsEmpty g) s = fun _ ↦ (ContinuousAlternatingMap.constOfIsEmpty ℝ E (Fin 0) g) :=
+  rfl
 
 theorem pullback_zero (f : E → F) :
     pullback f (0 : Ω^k⟮F, G⟯) = 0 :=
