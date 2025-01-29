@@ -223,9 +223,19 @@ theorem iprod_antisymm (ω : Ω^m + 2⟮E, ℝ⟯) (v w : E → E) (e : E) (m' :
     iprod (iprod ω v) w e m' = - iprod (iprod ω w) v e m' := by
   repeat
     rw[iprod_apply, curryFin_apply]
-  let h := AlternatingMap.map_swap (ω e).toAlternatingMap (Fin.cons (v e) (Fin.cons (w e) m')) Fin.zero_ne_one
+  let h := AlternatingMap.map_swap (ω e).toAlternatingMap (Fin.cons (w e) (Fin.cons (v e) m')) Fin.zero_ne_one
   rw [@coe_toAlternatingMap] at h
-  sorry
+  rw [← h]
+  clear h
+  congr 1
+  ext i
+  obtain (rfl | ⟨ i , rfl ⟩) := i.eq_zero_or_eq_succ
+  · simp
+  obtain (rfl | ⟨ i , rfl ⟩) := i.eq_zero_or_eq_succ
+  · simp
+  · rw[Function.comp_apply, Equiv.swap_apply_of_ne_of_ne] <;>
+    simp only [Fin.cons_succ, ← Fin.succ_zero_eq_one, ne_eq, Fin.succ_inj,
+      Fin.succ_ne_zero, not_false_eq_true]
 
 /- Interior product with twice the same vector field is zero -/
 theorem iprod_iprod (ω : Ω^m + 2⟮E, ℝ⟯) (v : E → E) :
@@ -343,7 +353,11 @@ theorem ederiv_wedge (ω : Ω^m⟮E, F⟯) (τ : Ω^n⟮E, F'⟯) (f : F →L[�
     ederiv (ω ∧[f] τ) = (domDomCongr finAddFlipAssoc (ederiv ω ∧[f] τ))
       + ((-1 : ℝ)^m) • ((ω ∧[f] ederiv τ)) := by
   ext x y
-  rw[_root_.add_apply, /- `ContinuousAlternatingMap.add_apply` doesn't work??? -/]
+  rw[Pi.add_apply /- `ContinuousAlternatingMap.add_apply` doesn't work??? -/]
+  erw[ContinuousAlternatingMap.add_apply]
+  simp
+  rw[domDomCongr_apply, wedge_product_def, ContinuousAlternatingMap.wedge_product_def]
+  #check ContinuousAlternatingMap.add_apply
   sorry
 
 /- The graded Leibniz rule for the interior product of the wedge product -/
@@ -352,6 +366,7 @@ theorem iprod_wedge (ω : Ω^m + 1⟮E, F⟯) (τ : Ω^n + 1⟮E, F'⟯) (f : F 
       + (-1)^m • (domDomCongr finAddFlipAssoc (ω ∧[f] (iprod τ v))) := by
   ext e x
   rw [_root_.add_apply]
+  erw[ContinuousAlternatingMap.add_apply]
   sorry
 
 /- Exterior derivative commutes with pullback -/
@@ -367,4 +382,6 @@ theorem pullback_ederiv (f : E → F) (ω : Ω^n⟮F, G⟯) {x : E} (hf : Differ
   rw [← ContinuousLinearMap.comp_apply, ← fderiv_comp x hω hf]
   /- Here, I'd want to unpack `pullback`, but I need some lemma telling me what the
   `fderiv of pullback` is -/
+  simp +unfoldPartialApp only [pullback]
+
   sorry

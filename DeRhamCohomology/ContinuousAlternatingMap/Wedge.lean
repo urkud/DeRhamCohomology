@@ -156,6 +156,11 @@ theorem wedge_antisymm (g : M [⋀^Fin m]→L[𝕜] 𝕜) (h : M [⋀^Fin n]→L
     uncurryFinAdd, domDomCongr_apply, uncurrySum_apply, ContinuousMultilinearMap.sum_apply]
   /- We cannot apply `uncurrySum.summand` until we have removed the sums
   How do we equalise the sums using `finAddFlip`?? -/
+  rw[Finset.smul_sum]
+  -- apply Finset.sum_bij
+  #check Equiv.sum_comp
+  -- Search for Equiv between Equiv.Perm.ModSumCongr (Fin n) (Fin m) and swap Or make it yourself
+  -- After it works the same way as normal with removing sum and working over summands
   sorry
 
 variable {M : Type*} [NormedAddCommGroup M] [NormedSpace ℝ M]
@@ -186,6 +191,8 @@ theorem wedge_self_odd_zero (g : M [⋀^Fin m]→L[ℝ] ℝ) (m_odd : Odd m) :
       ContinuousLinearMap.mul_apply']
     simp only [smul_left_cancel_iff]
     /- We want to remove `finAddFlip` from this equation by essentially swapping `Sum.inl` and `Sum.inr` how? -/
+    simp [Function.comp_def, ]
+
     sorry
   rw[← h1, smul_eq_mul, neg_mul, one_mul] at h
   apply sub_eq_zero_of_eq at h
