@@ -353,11 +353,14 @@ theorem ederiv_wedge (ω : Ω^m⟮E, F⟯) (τ : Ω^n⟮E, F'⟯) (f : F →L[�
     ederiv (ω ∧[f] τ) = (domDomCongr finAddFlipAssoc (ederiv ω ∧[f] τ))
       + ((-1 : ℝ)^m) • ((ω ∧[f] ederiv τ)) := by
   ext x y
-  rw[Pi.add_apply /- `ContinuousAlternatingMap.add_apply` doesn't work??? -/]
-  erw[ContinuousAlternatingMap.add_apply]
+  rw[Pi.add_apply]
+  erw[ContinuousAlternatingMap.add_apply] -- FIXME
   simp
-  rw[domDomCongr_apply, wedge_product_def, ContinuousAlternatingMap.wedge_product_def]
-  #check ContinuousAlternatingMap.add_apply
+  rw[domDomCongr_apply, wedge_product_def, ContinuousAlternatingMap.wedge_product_def, uncurryFinAdd,
+    ContinuousAlternatingMap.domDomCongr_apply, uncurrySum_apply, wedge_product_def,
+    ContinuousAlternatingMap.wedge_product_def, uncurryFinAdd, ContinuousAlternatingMap.domDomCongr_apply,
+    uncurrySum_apply, ContinuousMultilinearMap.sum_apply, ContinuousMultilinearMap.sum_apply,
+    ederiv, uncurryFin_apply]
   sorry
 
 /- The graded Leibniz rule for the interior product of the wedge product -/
@@ -365,13 +368,21 @@ theorem iprod_wedge (ω : Ω^m + 1⟮E, F⟯) (τ : Ω^n + 1⟮E, F'⟯) (f : F 
     iprod (domDomCongr finAddFlipAssoc (ω ∧[f] τ)) v = ((iprod ω v) ∧[f] τ)
       + (-1)^m • (domDomCongr finAddFlipAssoc (ω ∧[f] (iprod τ v))) := by
   ext e x
-  rw [_root_.add_apply]
-  erw[ContinuousAlternatingMap.add_apply]
+  rw[_root_.add_apply]
+  erw[ContinuousAlternatingMap.add_apply] -- FIXME
+  simp only [Nat.add_eq, Int.reduceNeg, Pi.smul_apply, coe_smul]
+  rw[wedge_product_def, domDomCongr_apply, wedge_product_def, ContinuousAlternatingMap.wedge_product_def,
+    uncurryFinAdd, ContinuousAlternatingMap.domDomCongr_apply, uncurrySum_apply, ContinuousMultilinearMap.sum_apply,
+    ContinuousAlternatingMap.wedge_product_def, uncurryFinAdd, ContinuousAlternatingMap.domDomCongr_apply,
+    uncurrySum_apply, ContinuousMultilinearMap.sum_apply, iprod_apply, curryFin_apply, domDomCongr_apply,
+    wedge_product_def, ContinuousAlternatingMap.wedge_product_def, uncurryFinAdd,
+    ContinuousAlternatingMap.domDomCongr_apply, uncurrySum_apply, ContinuousMultilinearMap.sum_apply]
   sorry
 
 /- Exterior derivative commutes with pullback -/
 theorem pullback_ederiv (f : E → F) (ω : Ω^n⟮F, G⟯) {x : E} (hf : DifferentiableAt ℝ f x)
-    (hω : DifferentiableAt ℝ ω (f x)) : pullback f (ederiv ω) x = ederiv (pullback f ω) x := by
+    (hω : DifferentiableAt ℝ ω (f x)) (hff : UniqueDiffOn ℝ (univ : Set E)) :
+    pullback f (ederiv ω) x = ederiv (pullback f ω) x := by
   ext v
   rw[pullback, ederiv, ContinuousAlternatingMap.compContinuousLinearMap_apply,
     uncurryFin_apply, ederiv, uncurryFin_apply]
@@ -380,8 +391,18 @@ theorem pullback_ederiv (f : E → F) (ω : Ω^n⟮F, G⟯) {x : E} (hf : Differ
   refine Mathlib.Tactic.LinearCombination.smul_const_eq ?H.p ((-1) ^ (p : ℕ))
   simp only [Function.comp_apply]
   rw [← ContinuousLinearMap.comp_apply, ← fderiv_comp x hω hf]
-  /- Here, I'd want to unpack `pullback`, but I need some lemma telling me what the
-  `fderiv of pullback` is -/
   simp +unfoldPartialApp only [pullback]
-
-  sorry
+  rw[fderiv_apply, fderiv_apply]
+  simp only [Function.comp_apply, compContinuousLinearMap_apply]
+  refine DFunLike.congr ?H.p.h₁ rfl
+  have : p.removeNth (⇑(fderiv ℝ f x) ∘ v) = (fderiv ℝ f x) ∘ p.removeNth v :=
+    rfl
+  rw[this]
+  apply EventuallyEq.fderiv_eq
+  refine EventuallyEq.comp₂ (Eq.eventuallyEq rfl) DFunLike.coe ?h1
+  refine EventuallyEq.comp₂ ?h2 Function.comp (Eq.eventuallyEq rfl)
+  refine EventuallyEq.comp₂ (Eq.eventuallyEq rfl) (@DFunLike.coe (E →L[ℝ] F) E fun x ↦ F) ?h2.Hg
+  -- Differentiability conditions
+  · sorry
+  · sorry
+  · exact DifferentiableAt.comp x hω hf

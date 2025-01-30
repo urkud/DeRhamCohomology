@@ -157,10 +157,26 @@ theorem wedge_antisymm (g : M [⋀^Fin m]→L[𝕜] 𝕜) (h : M [⋀^Fin n]→L
   /- We cannot apply `uncurrySum.summand` until we have removed the sums
   How do we equalise the sums using `finAddFlip`?? -/
   rw[Finset.smul_sum]
-  -- apply Finset.sum_bij
-  #check Equiv.sum_comp
   -- Search for Equiv between Equiv.Perm.ModSumCongr (Fin n) (Fin m) and swap Or make it yourself
   -- After it works the same way as normal with removing sum and working over summands
+  have h2 : Equiv.Perm.ModSumCongr (Fin m) (Fin n) ≃ Equiv.Perm.ModSumCongr (Fin n) (Fin m) := by sorry
+  rw[← Equiv.sum_comp h2]
+  apply Finset.sum_congr rfl
+  intro σ hσ
+  rcases σ with ⟨σ₁⟩
+  rw[uncurrySum.summand_mk]
+  rw[ContinuousMultilinearMap.smul_apply, ContinuousMultilinearMap.domDomCongr_apply,
+    ContinuousMultilinearMap.uncurrySum_apply, ContinuousMultilinearMap.flipMultilinear_apply,
+    coe_toContinuousMultilinearMap, ContinuousMultilinearMap.flipAlternating_apply,
+    coe_toContinuousMultilinearMap, ContinuousLinearMap.compContinuousAlternatingMap₂_apply,
+    ContinuousLinearMap.mul_apply']
+  -- Need to fix h2 applied ...
+  -- rw[uncurrySum.summand_mk]
+  -- rw[ContinuousMultilinearMap.smul_apply, ContinuousMultilinearMap.domDomCongr_apply,
+  --   ContinuousMultilinearMap.uncurrySum_apply, ContinuousMultilinearMap.flipMultilinear_apply,
+  --   coe_toContinuousMultilinearMap, ContinuousMultilinearMap.flipAlternating_apply,
+  --   coe_toContinuousMultilinearMap, ContinuousLinearMap.compContinuousAlternatingMap₂_apply,
+  --   ContinuousLinearMap.mul_apply']
   sorry
 
 variable {M : Type*} [NormedAddCommGroup M] [NormedSpace ℝ M]
@@ -192,8 +208,16 @@ theorem wedge_self_odd_zero (g : M [⋀^Fin m]→L[ℝ] ℝ) (m_odd : Odd m) :
     simp only [smul_left_cancel_iff]
     /- We want to remove `finAddFlip` from this equation by essentially swapping `Sum.inl` and `Sum.inr` how? -/
     simp [Function.comp_def, ]
-
-    sorry
+    have h2 : (fun x_1 ↦ x (finAddFlip (finSumFinEquiv (σ₁ (Sum.inl x_1))))) = fun x_1 ↦ x (finSumFinEquiv (σ₁ (Sum.inr x_1))) := by
+      funext n
+      congr 1
+      ext
+      sorry
+    have h3 : (fun x_1 ↦ x (finAddFlip (finSumFinEquiv (σ₁ (Sum.inr x_1))))) = fun x_1 ↦ x (finSumFinEquiv (σ₁ (Sum.inl x_1))) := by
+      funext n
+      congr 1
+      sorry
+    rw[h2, h3, mul_comm]
   rw[← h1, smul_eq_mul, neg_mul, one_mul] at h
   apply sub_eq_zero_of_eq at h
   rw[sub_neg_eq_add, add_self_eq_zero] at h
