@@ -20,9 +20,8 @@ variable
   {M'' : Type*} [TopologicalSpace M''] [ChartedSpace H'' M'']
   {f : M → M'} {s t : Set M} {x y : M}
 
-/- This isn't right ...
-Need a ContDiff and ContMDiff version of Alternating maps first??
-Then one can define this as the map M → TangentSpace I [k, ⋀^Fin n]→L[ ℝ ] ℝ -/
-notation "Ω^" k "," n "⟮" I ", " M "⟯" => M → TangentSpace I [⋀^Fin n]→L[ℝ] ℝ
+/- Step 1 : Define differential forms as sections of the continuous alternating maps bundle -/
+
+
 
 namespace DifferentialForm

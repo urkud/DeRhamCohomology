@@ -185,44 +185,6 @@ theorem ederiv_ederiv (ω : Ω^n⟮E, F⟯) (h : ContDiff ℝ 2 ω) : ederiv (ed
 def pullback (f : E → F) (ω : Ω^k⟮F, G⟯) : Ω^k⟮E, G⟯ :=
     fun x ↦ (ω (f x)).compContinuousLinearMap (fderiv ℝ f x)
 
-/- Pullback within a set of form under a function -/
-def pullbackWithin (f : E → F) (ω : Ω^k⟮F, G⟯) (s : Set E) : Ω^k⟮E, G⟯ :=
-    fun x ↦ (ω (f x)).compContinuousLinearMap (fderivWithin ℝ f s x)
-
-@[simp]
-lemma pullbackWithin_univ {f : E → F} {ω : Ω^k⟮F, G⟯} :
-    pullbackWithin f ω univ = pullback f ω := by
-  ext x v
-  simp [pullbackWithin, pullback]
-
-theorem pullbackWithin_zero (f : E → F) (s : Set E):
-    pullbackWithin f (0 : Ω^k⟮F, G⟯) s = 0 :=
-  rfl
-
-theorem pullbackWithin_add (f : E → F) (ω : Ω^k⟮F, G⟯) (τ : Ω^k⟮F, G⟯) (s : Set E) :
-    pullbackWithin f (ω + τ) s = pullbackWithin f ω s + pullbackWithin f τ s :=
-  rfl
-
-theorem pullbackWithin_sub (f : E → F) (ω : Ω^k⟮F, G⟯) (τ : Ω^k⟮F, G⟯) (s : Set E) :
-    pullbackWithin f (ω - τ) s = pullbackWithin f ω s - pullbackWithin f τ s :=
-  rfl
-
-theorem pullbackWithin_neg (f : E → F) (ω : Ω^k⟮F, G⟯) (s : Set E) :
-    - pullbackWithin f ω s = pullbackWithin f (-ω) s :=
-  rfl
-
-theorem pullbackWithin_smul (f : E → F) (ω : Ω^k⟮F, G⟯) (c : ℝ) (s : Set E) :
-    c • (pullbackWithin f ω s) = pullbackWithin f (c • ω) s :=
-  rfl
-
-theorem pullbackWithin_ofSubsingleton (f : E → F) (ω : F → F →L[ℝ] G) (s : Set E) :
-    pullbackWithin f (ofSubsingleton ω) s = ofSubsingleton (fun e ↦ (ω (f e)).comp (fderivWithin ℝ f s e)) :=
-  rfl
-
-theorem pullbackWithin_constOfIsEmpty (f : E → F) (g : G) (s : Set E) :
-    pullbackWithin f (constOfIsEmpty g) s = fun _ ↦ (ContinuousAlternatingMap.constOfIsEmpty ℝ E (Fin 0) g) :=
-  rfl
-
 theorem pullback_zero (f : E → F) :
     pullback f (0 : Ω^k⟮F, G⟯) = 0 :=
   rfl
