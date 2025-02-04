@@ -45,26 +45,8 @@ theorem contMDiffOn_continuousAlternatingMapCoordChange
   have h₁ := contMDiffOn_coordChangeL (IB := IB) e₁' e₁ (n := ⊤)
   have h₂ := contMDiffOn_coordChangeL (IB := IB) e₂ e₂' (n := ⊤)
   sorry
+  -- `To prove this, we need a cle_arrowCongr for Alternating Maps`
   -- refine (h₁.mono ?_).cle_arrowCongr (h₂.mono ?_) <;> mfld_set_tac
-
-variable [∀ x, TopologicalAddGroup (E₂ x)] [∀ x, ContinuousSMul 𝕜 (E₂ x)]
-
--- `need a version of incoordinates for alternating maps for the following two commented theorems?`
-
--- theorem alt_chart (y₀ y : AE₁E₂) :
---     chartAt (ModelProd HB (F₁ [⋀^ι]→L[𝕜] F₂)) y₀ y =
---       ⟨chartAt HB y₀.1 y.1, inCoordinates F₁ E₁ F₂ E₂ y₀.1 y.1 y₀.1 y.1 y.2⟩ := by
---   sorry
-  -- rw [FiberBundle.chartedSpace_chartAt, trans_apply, PartialHomeomorph.prod_apply,
-  --   Trivialization.coe_coe, PartialHomeomorph.refl_apply, Function.id_def,
-  --   hom_trivializationAt_apply]
-
--- theorem contMDiffAt_hom_bundle (f : M → AE₁E₂) {x₀ : M} {n : ℕ∞} :
---     ContMDiffAt IM (IB.prod 𝓘(𝕜, F₁ [⋀^ι]→L[𝕜] F₂)) n f x₀ ↔
---       ContMDiffAt IM IB n (fun x => (f x).1) x₀ ∧
---         ContMDiffAt IM 𝓘(𝕜, F₁ [⋀^ι]→L[𝕜] F₂) n
---           (fun x => inCoordinates F₁ E₁ F₂ E₂ (f x₀).1 (f x).1 (f x₀).1 (f x).1 (f x).2) x₀ :=
---   contMDiffAt_totalSpace ..
 
 variable [SmoothVectorBundle F₁ E₁ IB] [SmoothVectorBundle F₂ E₂ IB]
 
