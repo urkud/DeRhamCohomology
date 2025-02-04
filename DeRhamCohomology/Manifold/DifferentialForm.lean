@@ -56,8 +56,9 @@ variable {𝕜 ι B F₁ F₂ M : Type*} {E₁ : B → Type*} {E₂ : B → Type
 -- k-times continuously differentiable
 --
 #check ContMDiffSection IB (F₁ [⋀^Fin m]→L[𝕜] F₂) k (Bundle.continuousAlternatingMap 𝕜 (Fin m) F₁ E₁ F₂ E₂)
---#check ContMDiffSection IM (EM [⋀^Fin m]→L[ℝ] ℝ) k
---  (Bundle.continuousAlternatingMap ℝ (Fin m) EM (TangentSpace IM : M → Type _) ℝ /- `M → ℝ???` -/)
+#check ContMDiffSection IM (EM [⋀^Fin m]→L[ℝ] ℝ) k
+  (Bundle.continuousAlternatingMap ℝ (Fin m) EM (TangentSpace IM : M → Type _) ℝ
+    (Bundle.Trivial M ℝ))
 
 
 
