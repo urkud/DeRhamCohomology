@@ -52,11 +52,11 @@ theorem mpullback_sub (f : M → N) :
   rfl
 
 theorem mpullback_neg (f : M → N) :
-    - mpullback IM M IN N α  = mpullback IM M IN N (-α) :=
+    - mpullback IM M IN N α f = mpullback IM M IN N (-α) f :=
   rfl
 
 theorem mpullback_smul (f : M → N) (c : ℝ) :
-    c • (mpullback IM M IN N α) = mpullback IM M IN N (c • α) :=
+    c • (mpullback IM M IN N α) f = mpullback IM M IN N (c • α) f :=
   rfl
 
 end mpullback
@@ -73,6 +73,23 @@ end mwedge_product
 
 section mederiv
 
-/- Place for exterio derivative definitions -/
+variable
+  (α : (x : M) → TangentSpace IM x [⋀^Fin m]→L[ℝ] Trivial M ℝ x)
+
+  {EN : Type*} [NormedAddCommGroup EN] [NormedSpace ℝ EN]
+  {HN : Type*} [TopologicalSpace HN]
+  (IN : ModelWithCorners ℝ EN HN)
+  (N : Type*) [TopologicalSpace N] [ChartedSpace HN N] [SmoothManifoldWithCorners IN N]
+  (o : M) (f : M → N)
+
+/- Place for exterior derivative definitions -/
+
+#check (extChartAt IM o).symm
+#check writtenInExtChartAt IM 𝓘(ℝ, (EM [⋀^Fin m]→L[ℝ] ℝ)) o α
+#check range IM
+
+def mederivWithin (s : Set M) (x : M) : TangentSpace IM x [⋀^Fin (m + 1)]→L[ℝ] Trivial M ℝ x :=
+    (ederivWithin (E := EM) (F := ℝ) (n := m) (writtenInExtChartAt IM 𝓘(ℝ, (EM [⋀^Fin m]→L[ℝ] ℝ)) o α)
+      ((extChartAt IM x).symm ⁻¹' s ∩ range IM)) (extChartAt IM x x)
 
 end mederiv
