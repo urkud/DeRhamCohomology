@@ -10,56 +10,69 @@ open scoped Topology Manifold ContDiff
 
 noncomputable section
 
--- Possible extra variables
-variable
-  {H : Type*} [TopologicalSpace H] {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-  {I : ModelWithCorners ℝ E H}
-  {M : Type*} [TopologicalSpace M] [ChartedSpace H M]
-  {H' : Type*} [TopologicalSpace H'] {E' : Type*} [NormedAddCommGroup E'] [NormedSpace ℝ E']
-  {I' : ModelWithCorners ℝ E' H'}
-  {M' : Type*} [TopologicalSpace M'] [ChartedSpace H' M']
-  {H'' : Type*} [TopologicalSpace H''] {E'' : Type*} [NormedAddCommGroup E''] [NormedSpace ℝ E'']
-  {I'' : ModelWithCorners ℝ E'' H''}
-  {M'' : Type*} [TopologicalSpace M''] [ChartedSpace H'' M'']
-  {f : M → M'} {s t : Set M} {x y : M}
-
-variable {𝕜 ι B F₁ F₂ M : Type*} {E₁ : B → Type*} {E₂ : B → Type*}
-  [NontriviallyNormedField 𝕜]
-  [Fintype ι]
-  {EB : Type*} [NormedAddCommGroup EB] [NormedSpace 𝕜 EB]
-  {HB : Type*} [TopologicalSpace HB]
-  (IB : ModelWithCorners 𝕜 EB HB)
-  [TopologicalSpace B] [ChartedSpace HB B]
-  [∀ x, AddCommGroup (E₁ x)] [∀ x, Module 𝕜 (E₁ x)]
-  [NormedAddCommGroup F₁] [NormedSpace 𝕜 F₁]
-  [TopologicalSpace (TotalSpace F₁ E₁)] [∀ x, TopologicalSpace (E₁ x)] [∀ x, AddCommGroup (E₂ x)]
-  [∀ x, Module 𝕜 (E₂ x)]
-  [NormedAddCommGroup F₂] [NormedSpace 𝕜 F₂]
-  [TopologicalSpace (TotalSpace F₂ E₂)] [∀ x, TopologicalSpace (E₂ x)]
-  [∀ x, TopologicalAddGroup (E₂ x)] [∀ x, ContinuousSMul 𝕜 (E₂ x)]
+variable {ι : Type*} [Fintype ι]
   {EM : Type*} [NormedAddCommGroup EM] [NormedSpace ℝ EM]
   {HM : Type*} [TopologicalSpace HM]
-  {IM : ModelWithCorners ℝ EM HM}
-  [TopologicalSpace M] [ChartedSpace HM M] [SmoothManifoldWithCorners IM M] {n : WithTop ℕ∞}
-  [FiberBundle F₁ E₁] [VectorBundle 𝕜 F₁ E₁]
-  [FiberBundle F₂ E₂] [VectorBundle 𝕜 F₂ E₂]
-  {e₁ e₁' : Trivialization F₁ (π F₁ E₁)}
-  {e₂ e₂' : Trivialization F₂ (π F₂ E₂)}
-  (m k : ℕ)
+  (IM : ModelWithCorners ℝ EM HM)
+  (M : Type*) [TopologicalSpace M] [ChartedSpace HM M] [SmoothManifoldWithCorners IM M]
+  {m n : ℕ} {k : ℕ∞}
 
-#check SmoothVectorBundle.continuousAlternatingMap
-#check (TangentSpace IM : M → Type _)
-#check (TangentSpace 𝓘(ℝ, ℝ) : ℝ  → Type _)
--- The sections of the bundle of continuousAlternatingMaps
--- IB is the model space for B -> In our case model for M underlying manifold
--- (F₁ [⋀^Fin m]→L[𝕜] F₂) is model space for each alternating map -> In our case TpM [⋀^Fin m]→L[ℝ] ℝ
--- k-times continuously differentiable
---
-#check ContMDiffSection IB (F₁ [⋀^Fin m]→L[𝕜] F₂) k (Bundle.continuousAlternatingMap 𝕜 (Fin m) F₁ E₁ F₂ E₂)
-#check ContMDiffSection IM (EM [⋀^Fin m]→L[ℝ] ℝ) k
-  (Bundle.continuousAlternatingMap ℝ (Fin m) EM (TangentSpace IM : M → Type _) ℝ
-    (Bundle.Trivial M ℝ))
-
-
+-- Setup for Differential Form Space
+notation "Ω^" k "," m "⟮" EM "," IM "," M "⟯" =>
+  ContMDiffSection IM (EM [⋀^Fin m]→L[ℝ] ℝ) k
+    (Bundle.continuousAlternatingMap ℝ (Fin m) EM (TangentSpace IM : M → Type _) ℝ (Bundle.Trivial M ℝ))
 
 namespace DifferentialForm
+
+section mpullback
+
+variable
+  {EN : Type*} [NormedAddCommGroup EN] [NormedSpace ℝ EN]
+  {HN : Type*} [TopologicalSpace HN]
+  (IN : ModelWithCorners ℝ EN HN)
+  (N : Type*) [TopologicalSpace N] [ChartedSpace HN N] [SmoothManifoldWithCorners IN N]
+
+variable (α β : (x : N) → TangentSpace IN x [⋀^Fin m]→L[ℝ] Trivial N ℝ x)
+
+/- The pullback of a differential form
+Want to keep k-times differentiability away from it. Is this the way? -/
+def mpullback (f : M → N) : (x : M) → TangentSpace IM x [⋀^Fin m]→L[ℝ] Trivial N ℝ (f x) :=
+    fun x ↦ (α (f x)).compContinuousLinearMap (mfderiv IM IN f x)
+
+theorem mpullback_zero (f : M → N) :
+    mpullback IM M IN N (0 : (x : N) → TangentSpace IN x [⋀^Fin m]→L[ℝ] Trivial N ℝ x) f = 0 :=
+  rfl
+
+theorem mpullback_add (f : M → N) :
+    mpullback IM M IN N (α + β) f = mpullback IM M IN N α f + mpullback IM M IN N β f :=
+  rfl
+
+theorem mpullback_sub (f : M → N) :
+    mpullback IM M IN N (α - β) f = mpullback IM M IN N α f - mpullback IM M IN N β f :=
+  rfl
+
+theorem mpullback_neg (f : M → N) :
+    - mpullback IM M IN N α  = mpullback IM M IN N (-α) :=
+  rfl
+
+theorem mpullback_smul (f : M → N) (c : ℝ) :
+    c • (mpullback IM M IN N α) = mpullback IM M IN N (c • α) :=
+  rfl
+
+end mpullback
+
+section mwedge_product
+
+variable
+  (α : (x : M) → TangentSpace IM x [⋀^Fin m]→L[ℝ] Trivial M ℝ x)
+  (β : (x : M) → TangentSpace IM x [⋀^Fin n]→L[ℝ] Trivial M ℝ x)
+
+/- Place for wedge product definitions etc. -/
+
+end mwedge_product
+
+section mederiv
+
+/- Place for exterio derivative definitions -/
+
+end mederiv
