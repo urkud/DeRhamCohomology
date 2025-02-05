@@ -10,7 +10,7 @@ open scoped Topology Manifold ContDiff
 
 noncomputable section
 
-variable {ι : Type*} [Fintype ι]
+variable
   {EM : Type*} [NormedAddCommGroup EM] [NormedSpace ℝ EM]
   {HM : Type*} [TopologicalSpace HM]
   (IM : ModelWithCorners ℝ EM HM)
@@ -89,7 +89,7 @@ variable
 #check range IM
 
 def mederivWithin (s : Set M) (x : M) : TangentSpace IM x [⋀^Fin (m + 1)]→L[ℝ] Trivial M ℝ x :=
-    (ederivWithin (E := EM) (F := ℝ) (n := m) (writtenInExtChartAt IM 𝓘(ℝ, (EM [⋀^Fin m]→L[ℝ] ℝ)) o α)
+    (ederivWithin (E := EM) (F := ℝ) (n := m) (writtenInExtChartAt IM 𝓘(ℝ, (EM [⋀^Fin m]→L[ℝ] ℝ)) x α)
       ((extChartAt IM x).symm ⁻¹' s ∩ range IM)) (extChartAt IM x x)
 
 end mederiv
