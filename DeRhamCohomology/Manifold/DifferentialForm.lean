@@ -87,9 +87,11 @@ variable
 #check (extChartAt IM o).symm
 #check writtenInExtChartAt IM 𝓘(ℝ, (EM [⋀^Fin m]→L[ℝ] ℝ)) o α
 #check range IM
+#check 𝒜⟮ ℝ, Fin m; EM, (TangentSpace IM : M → Type _); ℝ, (Bundle.Trivial M ℝ)⟯
 
 def mederivWithin (s : Set M) (x : M) : TangentSpace IM x [⋀^Fin (m + 1)]→L[ℝ] Trivial M ℝ x :=
-    (ederivWithin (E := EM) (F := ℝ) (n := m) (writtenInExtChartAt IM 𝓘(ℝ, (EM [⋀^Fin m]→L[ℝ] ℝ)) x α)
-      ((extChartAt IM x).symm ⁻¹' s ∩ range IM)) (extChartAt IM x x)
+    (ederivWithin (E := EM) (F := ℝ) (n := m) (writtenInExtChartAt IM 𝓘(ℝ, (EM [⋀^Fin m]→L[ℝ] ℝ)) x
+      (fun (y : M) ↦ (α y : 𝒜⟮ ℝ, Fin m; EM, (TangentSpace IM : M → Type _); ℝ, (Bundle.Trivial M ℝ)⟯)))
+        ((extChartAt IM x).symm ⁻¹' s ∩ range IM)) (extChartAt IM x x)
 
 end mederiv
