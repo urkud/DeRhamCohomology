@@ -77,19 +77,13 @@ end mwedge_product
 section mederiv
 
 variable
-  (β : Ω^k,m⟮EM, IM, M⟯)
-
-  {EN : Type*} [NormedAddCommGroup EN] [NormedSpace ℝ EN]
-  {HN : Type*} [TopologicalSpace HN]
-  (IN : ModelWithCorners ℝ EN HN)
-  (N : Type*) [TopologicalSpace N] [ChartedSpace HN N] [SmoothManifoldWithCorners IN N]
   [ChartedSpace (EM [⋀^Fin m]→L[ℝ] ℝ) 𝒜⟮ℝ,Fin m;EM,TangentSpace IM;ℝ,Trivial M ℝ⟯] -- Shouldn't this just be true already?
-  (o : M) (f : M → N)
+  (α : Ω^k,m⟮EM, IM, M⟯)
 
 /- Definition of the manifold exterior derivative of differential form within a set -/
 def mederivWithin (s : Set M) (x : M) : TangentSpace IM x [⋀^Fin (m + 1)]→L[ℝ] Trivial M ℝ x :=
     (ederivWithin (E := EM) (F := ℝ) (n := m) (writtenInExtChartAt IM (𝓘(ℝ, (EM [⋀^Fin m]→L[ℝ] ℝ))) x
-      (fun y ↦ TotalSpace.mk' (EM [⋀^Fin m]→L[ℝ] ℝ) y (β.toFun y)))
+      (fun y ↦ TotalSpace.mk' (EM [⋀^Fin m]→L[ℝ] ℝ) y (α.toFun y)))
         ((extChartAt IM x).symm ⁻¹' s ∩ range IM)) (extChartAt IM x x)
 
 end mederiv
