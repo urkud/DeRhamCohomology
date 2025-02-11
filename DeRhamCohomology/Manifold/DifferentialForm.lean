@@ -66,8 +66,11 @@ section mwedge_product
 variable
   (α : (x : M) → TangentSpace IM x [⋀^Fin m]→L[ℝ] Trivial M ℝ x)
   (β : (x : M) → TangentSpace IM x [⋀^Fin n]→L[ℝ] Trivial M ℝ x)
+  [Π (x : M), NormedAddCommGroup (TangentSpace IM x)]
 
 /- Place for wedge product definitions etc. -/
+def mwedge_product (f : ℝ →L[ℝ] ℝ →L[ℝ] ℝ) : (x : M) → TangentSpace IM x [⋀^Fin (m + n)]→L[ℝ] Trivial M ℝ x :=
+    sorry
 
 end mwedge_product
 
@@ -85,9 +88,11 @@ variable
 /- Place for exterior derivative definitions -/
 
 #check (extChartAt IM o).symm
-#check writtenInExtChartAt IM 𝓘(ℝ, (EM [⋀^Fin m]→L[ℝ] ℝ)) o α
+#check writtenInExtChartAt IM 𝓘(ℝ, (EM [⋀^Fin m]→L[ℝ] ℝ)) o (fun y ↦ (α y))
 #check range IM
 #check 𝒜⟮ ℝ, Fin m; EM, (TangentSpace IM : M → Type _); ℝ, (Bundle.Trivial M ℝ)⟯
+#check ⋀^(Fin m)⟮ ℝ; EM, (TangentSpace IM : M → Type _); ℝ, (Bundle.Trivial M ℝ)⟯
+#check IM.tangent
 
 def mederivWithin (s : Set M) (x : M) : TangentSpace IM x [⋀^Fin (m + 1)]→L[ℝ] Trivial M ℝ x :=
     (ederivWithin (E := EM) (F := ℝ) (n := m) (writtenInExtChartAt IM 𝓘(ℝ, (EM [⋀^Fin m]→L[ℝ] ℝ)) x
