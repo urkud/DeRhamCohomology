@@ -77,26 +77,19 @@ end mwedge_product
 section mederiv
 
 variable
-  (α : (x : M) → TangentSpace IM x [⋀^Fin m]→L[ℝ] Trivial M ℝ x)
+  (β : Ω^k,m⟮EM, IM, M⟯)
 
   {EN : Type*} [NormedAddCommGroup EN] [NormedSpace ℝ EN]
   {HN : Type*} [TopologicalSpace HN]
   (IN : ModelWithCorners ℝ EN HN)
   (N : Type*) [TopologicalSpace N] [ChartedSpace HN N] [SmoothManifoldWithCorners IN N]
+  [ChartedSpace (EM [⋀^Fin m]→L[ℝ] ℝ) 𝒜⟮ℝ,Fin m;EM,TangentSpace IM;ℝ,Trivial M ℝ⟯] -- Shouldn't this just be true already?
   (o : M) (f : M → N)
 
-/- Place for exterior derivative definitions -/
-
-#check (extChartAt IM o).symm
-#check writtenInExtChartAt IM 𝓘(ℝ, (EM [⋀^Fin m]→L[ℝ] ℝ)) o (fun y ↦ (α y))
-#check range IM
-#check 𝒜⟮ ℝ, Fin m; EM, (TangentSpace IM : M → Type _); ℝ, (Bundle.Trivial M ℝ)⟯
-#check ⋀^(Fin m)⟮ ℝ; EM, (TangentSpace IM : M → Type _); ℝ, (Bundle.Trivial M ℝ)⟯
-#check IM.tangent
-
+/- Definition of the manifold exterior derivative of differential form within a set -/
 def mederivWithin (s : Set M) (x : M) : TangentSpace IM x [⋀^Fin (m + 1)]→L[ℝ] Trivial M ℝ x :=
-    (ederivWithin (E := EM) (F := ℝ) (n := m) (writtenInExtChartAt IM 𝓘(ℝ, (EM [⋀^Fin m]→L[ℝ] ℝ)) x
-      (fun (y : M) ↦ (α y : 𝒜⟮ ℝ, Fin m; EM, (TangentSpace IM : M → Type _); ℝ, (Bundle.Trivial M ℝ)⟯)))
+    (ederivWithin (E := EM) (F := ℝ) (n := m) (writtenInExtChartAt IM (𝓘(ℝ, (EM [⋀^Fin m]→L[ℝ] ℝ))) x
+      (fun y ↦ TotalSpace.mk' (EM [⋀^Fin m]→L[ℝ] ℝ) y (β.toFun y)))
         ((extChartAt IM x).symm ⁻¹' s ∩ range IM)) (extChartAt IM x x)
 
 end mederiv
