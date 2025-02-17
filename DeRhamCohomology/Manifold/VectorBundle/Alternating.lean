@@ -38,12 +38,22 @@ variable {F₃ F₄ : Type*}
 
 local notation "AE₁E₂" => TotalSpace (F₁ [⋀^ι]→L[𝕜] F₂) ⋀^ι⟮𝕜; F₁, E₁; F₂, E₂⟯
 
--- theorem ContMDiffOn.cle_arrowCongrAlternating {f : B → F₁ ≃L[𝕜] F₂} {g : B → F₃ ≃L[𝕜] F₄} {s : Set B}
---     (hf : ContMDiffOn IB 𝓘(𝕜, F₂ →L[𝕜] F₁) n (fun x ↦ ((f x).symm : F₂ →L[𝕜] F₁)) s)
---     (hg : ContMDiffOn IB 𝓘(𝕜, F₃ →L[𝕜] F₄) n (fun x ↦ (g x : F₃ →L[𝕜] F₄)) s) :
---     ContMDiffOn IB 𝓘(𝕜, (F₁ [⋀^ι]→L[𝕜] F₃) →L[𝕜] (F₂ [⋀^ι]→L[𝕜] F₄)) n
---       (fun y ↦ (f y).arrowCongr (g y) : B → (F₁ [⋀^ι]→L[𝕜] F₃) →L[𝕜] (F₂ [⋀^ι]→L[𝕜] F₄)) s := fun x hx ↦
---   (hf x hx).cle_arrowCongr (hg x hx)
+-- move this to `ContinuousAlternatingMap`
+theorem _root_.ContinuousAlternatingMap.compContinuousLinearMapL_contMDiff :
+    ContMDiff (𝓘(𝕜, (F₁ →L[𝕜] F₁))) (𝓘(𝕜, ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (F₁ [⋀^ι]→L[𝕜] F₂)))) ⊤
+    (fun p : (F₁ →L[𝕜] F₁) ↦ (ContinuousAlternatingMap.compContinuousLinearMapCLM p :
+      ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (F₁ [⋀^ι]→L[𝕜] F₂)))) := by
+  sorry
+  -- let φ : (F₁ [⋀^ι]→L[𝕜] F₂) →ₗᵢ[𝕜] _ := toContinuousMultilinearMapLI
+  -- let Φ : ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (F₁ [⋀^ι]→L[𝕜] F₂)) →ₗᵢ[𝕜] _ := φ.compLeft _ (RingHom.id _)
+  -- rw [← Φ.comp_continuous_iff]
+  -- show Continuous (fun p : F₁ →L[𝕜] F₁ ↦
+  --   (ContinuousMultilinearMap.compContinuousLinearMapL (fun _ ↦ p) :
+  --   ContinuousMultilinearMap 𝕜 (fun _ ↦ F₁) F₂ →L[𝕜]
+  --   ContinuousMultilinearMap 𝕜 (fun _ ↦ F₁) F₂).comp
+  --   (toContinuousMultilinearMapCLM 𝕜))
+  -- exact (ContinuousMultilinearMap.compContinuousLinearMapL_diag_continuous 𝕜 ι F₁ F₂).clm_comp
+  --   continuous_const
 
 theorem contMDiffOn_continuousAlternatingMapCoordChange
     [SmoothVectorBundle F₁ E₁ IB] [SmoothVectorBundle F₂ E₂ IB]
@@ -54,28 +64,28 @@ theorem contMDiffOn_continuousAlternatingMapCoordChange
       (e₁.baseSet ∩ e₂.baseSet ∩ (e₁'.baseSet ∩ e₂'.baseSet)) := by
   have h₁ := contMDiffOn_coordChangeL (IB := IB) e₁' e₁ (n := ⊤)
   have h₂ := contMDiffOn_coordChangeL (IB := IB) e₂ e₂' (n := ⊤)
-
+  have h₁_prod_h₂ := (h₁.mono (t := e₁.baseSet ∩ e₂.baseSet ∩ (e₁'.baseSet ∩ e₂'.baseSet))
+    (s := e₁'.baseSet ∩ e₁.baseSet) (by mfld_set_tac)).prod_mk
+      (h₂.mono (t := e₁.baseSet ∩ e₂.baseSet ∩ (e₁'.baseSet ∩ e₂'.baseSet))
+      (s := e₂.baseSet ∩ e₂'.baseSet) (by mfld_set_tac))
   let s (q : (F₁ →L[𝕜] F₁) × (F₂ →L[𝕜] F₂)) :
       (F₁ →L[𝕜] F₁) × ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (F₁ [⋀^ι]→L[𝕜] F₂)) :=
     (q.1, ContinuousLinearMap.compContinuousAlternatingMapL 𝕜 F₁ F₂ F₂ q.2)
-  have hs : ContMDiff 𝓘(𝕜, (F₁ →L[𝕜] F₁) × (F₂ →L[𝕜] F₂))
-      𝓘(𝕜, (F₁ →L[𝕜] F₁) × ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (F₁ [⋀^ι]→L[𝕜] F₂))) ⊤ s := by sorry
-    -- contMDiff_id.prod_map ()
-
-  -- have' := ((continuous_snd.clm_comp
-  --   ((ContinuousAlternatingMap.compContinuousLinearMapL_continuous 𝕜 ι F₁ F₂).comp
-  --   continuous_fst)).comp hs).comp_continuousOn
-  --   (s := (e₁.baseSet ∩ e₂.baseSet ∩ (e₁'.baseSet ∩ e₂'.baseSet))) ((h₃.mono ?_).prod (h₄.mono ?_))
-  -- · exact this
-  -- · mfld_set_tac
-  -- · mfld_set_tac
-
-  #check h₁.mono
-  #check ContMDiffOn.cle_arrowCongr
-
-  -- refine (h₁.mono ?_).cle_arrowCongr (h₂.mono ?_) <;> mfld_set_tac
-
-  sorry
+  have hs : ContMDiff (𝓘(𝕜, (F₁ →L[𝕜] F₁)).prod 𝓘(𝕜, (F₂ →L[𝕜] F₂)))
+      (𝓘(𝕜, (F₁ →L[𝕜] F₁)).prod 𝓘(𝕜, ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (F₁ [⋀^ι]→L[𝕜] F₂)))) ⊤ s := by
+    let t (p : (F₁ →L[𝕜] F₁) × (F₂ →L[𝕜] F₂)) :
+        ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (F₁ [⋀^ι]→L[𝕜] F₂)) :=
+      ContinuousLinearMap.compContinuousAlternatingMapL 𝕜 F₁ F₂ F₂ p.2
+    have ht : ContMDiff (𝓘(𝕜, (F₁ →L[𝕜] F₁)).prod 𝓘(𝕜, (F₂ →L[𝕜] F₂)))
+        𝓘(𝕜, ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (F₁ [⋀^ι]→L[𝕜] F₂))) ⊤ t := by
+          refine ContMDiff.clm_apply ?hg ?hf
+          exact contMDiff_const
+          exact contMDiff_snd
+    -- proof of hs
+    exact ContMDiff.prod_mk contMDiff_fst ht
+  exact ((contMDiff_snd.clm_comp ((ContinuousAlternatingMap.compContinuousLinearMapL_contMDiff
+    (𝕜 := 𝕜) (ι := ι) (F₁ := F₁) (F₂ := F₂)).comp contMDiff_fst)).comp hs).comp_contMDiffOn
+    (s := (e₁.baseSet ∩ e₂.baseSet ∩ (e₁'.baseSet ∩ e₂'.baseSet))) h₁_prod_h₂
 
 variable [SmoothVectorBundle F₁ E₁ IB] [SmoothVectorBundle F₂ E₂ IB]
 
