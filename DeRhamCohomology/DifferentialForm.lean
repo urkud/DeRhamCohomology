@@ -380,8 +380,8 @@ theorem iprod_wedge (ω : Ω^m + 1⟮E, F⟯) (τ : Ω^n + 1⟮E, F'⟯) (f : F 
   sorry
 
 /- Exterior derivative commutes with pullback -/
-theorem pullback_ederiv (f : E → F) (ω : Ω^n⟮F, G⟯) {x : E} (hf : DifferentiableAt ℝ f x)
-    (hω : DifferentiableAt ℝ ω (f x)) (hff : UniqueDiffOn ℝ (univ : Set E)) :
+theorem pullback_ederiv (f : E → F) (ω : Ω^n⟮F, G⟯) {x : E} (hf : ContDiffAt ℝ 2 f x)
+    (hω : DifferentiableAt ℝ ω (f x)) :
     pullback f (ederiv ω) x = ederiv (pullback f ω) x := by
   ext v
   rw[pullback, ederiv, ContinuousAlternatingMap.compContinuousLinearMap_apply,
@@ -390,7 +390,7 @@ theorem pullback_ederiv (f : E → F) (ω : Ω^n⟮F, G⟯) {x : E} (hf : Differ
   intro p q
   refine Mathlib.Tactic.LinearCombination.smul_const_eq ?H.p ((-1) ^ (p : ℕ))
   simp only [Function.comp_apply]
-  rw [← ContinuousLinearMap.comp_apply, ← fderiv_comp x hω hf]
+  rw [← ContinuousLinearMap.comp_apply, ← fderiv_comp x hω (hf.differentiableAt (by simp))]
   simp +unfoldPartialApp only [pullback]
   rw[fderiv_apply, fderiv_apply]
   simp only [Function.comp_apply, compContinuousLinearMap_apply]
@@ -405,4 +405,4 @@ theorem pullback_ederiv (f : E → F) (ω : Ω^n⟮F, G⟯) {x : E} (hf : Differ
   -- Differentiability conditions
   · sorry
   · sorry
-  · exact DifferentiableAt.comp x hω hf
+  · exact DifferentiableAt.comp x hω (hf.differentiableAt (by simp))

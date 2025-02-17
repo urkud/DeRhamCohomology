@@ -170,14 +170,21 @@ theorem wedge_antisymm (g : M [⋀^Fin m]→L[𝕜] 𝕜) (h : M [⋀^Fin n]→L
     coe_toContinuousMultilinearMap, ContinuousMultilinearMap.flipAlternating_apply,
     coe_toContinuousMultilinearMap, ContinuousLinearMap.compContinuousAlternatingMap₂_apply,
     ContinuousLinearMap.mul_apply']
-  -- Need to fix h2 applied ...
-  -- rw[uncurrySum.summand_mk]
-  -- rw[ContinuousMultilinearMap.smul_apply, ContinuousMultilinearMap.domDomCongr_apply,
-  --   ContinuousMultilinearMap.uncurrySum_apply, ContinuousMultilinearMap.flipMultilinear_apply,
-  --   coe_toContinuousMultilinearMap, ContinuousMultilinearMap.flipAlternating_apply,
-  --   coe_toContinuousMultilinearMap, ContinuousLinearMap.compContinuousAlternatingMap₂_apply,
-  --   ContinuousLinearMap.mul_apply']
-  sorry
+  -- Not completely how it needs to be I think. I assume we want the h and g swapped and all Fin m swapped with Fin n.
+  have h3 :
+    (uncurrySum.summand ((ContinuousLinearMap.mul 𝕜 𝕜).compContinuousAlternatingMap₂ h g)
+      (h2 (Quot.mk (⇑(QuotientGroup.leftRel (Equiv.Perm.sumCongrHom (Fin m) (Fin n)).range)) σ₁)))
+        ((x ∘ ⇑finAddFlip) ∘ ⇑finSumFinEquiv) = (-1 : 𝕜) ^ (m * n) • (uncurrySum.summand ((ContinuousLinearMap.mul 𝕜 𝕜).compContinuousAlternatingMap₂ g h)
+          (Quot.mk (⇑(QuotientGroup.leftRel (Equiv.Perm.sumCongrHom (Fin m) (Fin n)).range)) σ₁))
+            (x ∘ ⇑finSumFinEquiv) := by sorry
+  rw[h3, ← smul_assoc, smul_eq_mul, smul_eq_mul, pow_mul_pow_eq_one (m * n) (by simp), one_mul]
+  -- Finish off
+  rw[uncurrySum.summand_mk]
+  rw[ContinuousMultilinearMap.smul_apply, ContinuousMultilinearMap.domDomCongr_apply,
+    ContinuousMultilinearMap.uncurrySum_apply, ContinuousMultilinearMap.flipMultilinear_apply,
+    coe_toContinuousMultilinearMap, ContinuousMultilinearMap.flipAlternating_apply,
+    coe_toContinuousMultilinearMap, ContinuousLinearMap.compContinuousAlternatingMap₂_apply,
+    ContinuousLinearMap.mul_apply']
 
 variable {M : Type*} [NormedAddCommGroup M] [NormedSpace ℝ M]
 
