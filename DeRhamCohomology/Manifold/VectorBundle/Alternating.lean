@@ -38,8 +38,15 @@ variable {F₃ F₄ : Type*}
 
 local notation "AE₁E₂" => TotalSpace (F₁ [⋀^ι]→L[𝕜] F₂) ⋀^ι⟮𝕜; F₁, E₁; F₂, E₂⟯
 
+theorem _root_.ContinuousAlternatingMap.compContinuousLinearMap_contMDiff :
+    ContMDiff (𝓘(𝕜, F₁ [⋀^ι]→L[𝕜] F₂).prod 𝓘(𝕜, F₁ →L[𝕜] F₁)) (𝓘(𝕜, F₁ [⋀^ι]→L[𝕜] F₂)) ⊤
+    (fun (p : (F₁ [⋀^ι]→L[𝕜] F₂) × (F₁ →L[𝕜] F₁)) ↦ (ContinuousAlternatingMap.compContinuousLinearMap p.1 p.2)) := by
+  rw[ContMDiff]
+  intro m
+  sorry
+
 -- move this to `ContinuousAlternatingMap`
-theorem _root_.ContinuousAlternatingMap.compContinuousLinearMapL_contMDiff :
+theorem _root_.ContinuousAlternatingMap.compContinuousLinearMapCLM_contMDiff :
     ContMDiff (𝓘(𝕜, (F₁ →L[𝕜] F₁))) (𝓘(𝕜, ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (F₁ [⋀^ι]→L[𝕜] F₂)))) ⊤
     (fun p : (F₁ →L[𝕜] F₁) ↦ (ContinuousAlternatingMap.compContinuousLinearMapCLM p :
       ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (F₁ [⋀^ι]→L[𝕜] F₂)))) := by
@@ -83,7 +90,7 @@ theorem contMDiffOn_continuousAlternatingMapCoordChange
           exact contMDiff_snd
     -- proof of hs
     exact ContMDiff.prod_mk contMDiff_fst ht
-  exact ((contMDiff_snd.clm_comp ((ContinuousAlternatingMap.compContinuousLinearMapL_contMDiff
+  exact ((contMDiff_snd.clm_comp ((ContinuousAlternatingMap.compContinuousLinearMapCLM_contMDiff
     (𝕜 := 𝕜) (ι := ι) (F₁ := F₁) (F₂ := F₂)).comp contMDiff_fst)).comp hs).comp_contMDiffOn
     (s := (e₁.baseSet ∩ e₂.baseSet ∩ (e₁'.baseSet ∩ e₂'.baseSet))) h₁_prod_h₂
 
