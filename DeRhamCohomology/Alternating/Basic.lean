@@ -103,3 +103,7 @@ def flipAlternating (f : M [⋀^ι]→L[𝕜] (M' [⋀^ι']→L[𝕜] N)) :
       map_update_smul' := sorry
       map_eq_zero_of_eq' := sorry }
     1 sorry
+
+theorem flipAlternating_apply (f : M [⋀^ι]→L[𝕜] (M' [⋀^ι']→L[𝕜] N))
+    (m : ι → M) (m' : ι' → M') : flipAlternating f m' m = f m m' :=
+  rfl
