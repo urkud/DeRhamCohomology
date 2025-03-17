@@ -259,7 +259,7 @@ theorem wedge_product_def {ω₁ : Ω^m⟮E, F⟯} {ω₂ : Ω^n⟮E, F'⟯} {f 
 
 /- The wedge product wrt multiplication -/
 theorem wedge_product_mul {ω₁ : Ω^m⟮E, ℝ⟯} {ω₂ : Ω^n⟮E, ℝ⟯} {x : E} :
-    (ω₁ ∧[ContinuousLinearMap.mul ℝ ℝ] ω₂) x =
+    (ω₁ ∧ ω₂) x =
     ContinuousAlternatingMap.wedge_product (ω₁ x) (ω₂ x) (ContinuousLinearMap.mul ℝ ℝ) :=
   rfl
 
@@ -270,13 +270,12 @@ theorem wedge_product_lsmul {ω₁ : Ω^m⟮E, ℝ⟯} {ω₂ : Ω^n⟮E, F⟯} 
   rfl
 
 /- Associativity of wedge product -/
-theorem wedge_assoc (ω₁ : Ω^m⟮E, F⟯) (ω₂ : Ω^n⟮E, F⟯) (f : F →L[ℝ] F →L[ℝ] F)
-    (ω₃ : Ω^k⟮E, F⟯) (f' : F →L[ℝ] F →L[ℝ] F) :
-    domDomCongr finAssoc.symm (ω₁ ∧[f] ω₂ ∧[f'] ω₃) = (ω₁ ∧[f] ω₂) ∧[f'] ω₃ := by
+theorem wedge_assoc (ω₁ : Ω^m⟮E, ℝ⟯) (ω₂ : Ω^n⟮E, ℝ⟯) (ω₃ : Ω^k⟮E, ℝ⟯)  :
+    domDomCongr finAssoc.symm (ω₁ ∧ ω₂ ∧ ω₃) = (ω₁ ∧ ω₂) ∧ ω₃ := by
   ext x y
   rw[wedge_product_def, wedge_product_def, domDomCongr_apply, wedge_product_def, wedge_product_def,
     ← ContinuousAlternatingMap.domDomCongr_apply]
-  exact ContinuousAlternatingMap.wedge_assoc (ω₁ x) (ω₂ x) f (ω₃ x) f' y
+  exact ContinuousAlternatingMap.wedge_mul_assoc (ω₁ x) (ω₂ x) (ω₃ x) y
 
 /- Left distributivity of wedge product -/
 theorem add_wedge (ω₁ ω₂ : Ω^m⟮E, F⟯) (τ : Ω^n⟮E, F'⟯) (f : F →L[ℝ] F' →L[ℝ] F'') :

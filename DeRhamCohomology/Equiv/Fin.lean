@@ -2,6 +2,7 @@ import Mathlib.Data.Int.Defs
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Logic.Embedding.Set
 import Mathlib.Logic.Equiv.Option
+import Mathlib.Logic.Equiv.Fin
 
 /-!
 # Equivalences for `Fin n`
@@ -21,3 +22,10 @@ def finAddFlipAssoc {m n p : ℕ} : Fin (m + p + n) ≃ Fin (m + (n + p)) := by
   refine finCongr ?eq
   rw [Nat.add_right_comm]
   exact Nat.add_assoc m n p
+
+theorem finAddFlip_finSumFinEquiv {m n : ℕ} (a : Fin m ⊕ Fin n) :
+    finAddFlip (finSumFinEquiv a) = finSumFinEquiv (Equiv.sumComm _ _ a)  := by
+  refine Eq.symm (DFunLike.congr_arg finSumFinEquiv ?h₂)
+  rw [Equiv.congr_arg rfl]
+  refine (Equiv.apply_eq_iff_eq (Equiv.sumComm (Fin m) (Fin n))).mpr ?h₂.a
+  rw [Equiv.symm_apply_apply]

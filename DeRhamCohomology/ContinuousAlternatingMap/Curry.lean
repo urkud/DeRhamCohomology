@@ -237,6 +237,10 @@ theorem uncurrySum_apply (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) (m :
     uncurrySum f m = (∑ σ : Equiv.Perm.ModSumCongr ι ι', uncurrySum.summand f σ) m :=
   rfl
 
+theorem uncurrySum₁ (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) :
+    uncurrySum f = fun v => (∑ σ : Equiv.Perm.ModSumCongr ι ι', uncurrySum.summand f σ) v :=
+  rfl
+
 def uncurryFinAdd (f : E [⋀^Fin m]→L[𝕜] E [⋀^Fin n]→L[𝕜] F) :
     E [⋀^Fin (m + n)]→L[𝕜] F :=
   ContinuousAlternatingMap.domDomCongr finSumFinEquiv (uncurrySum f)
