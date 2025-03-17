@@ -213,6 +213,14 @@ theorem pullback_constOfIsEmpty (f : E → F) (g : G) :
     pullback f (constOfIsEmpty g) = fun _ ↦ (ContinuousAlternatingMap.constOfIsEmpty ℝ E (Fin 0) g) :=
   rfl
 
+/- Interior product of differential forms -/
+def iprod (ω : Ω^m + 1⟮E, F⟯) (v : E → E) : Ω^m⟮E, F⟯ :=
+    fun e => ContinuousAlternatingMap.curryFin (ω e) (v e)
+
+theorem iprod_apply (ω : Ω^m + 1⟮E, F⟯) (v : E → E) (e : E) :
+    iprod ω v e = ContinuousAlternatingMap.curryFin (ω e) (v e) :=
+  rfl
+
 /- Wedge product of differential forms -/
 def wedge_product (ω₁ : Ω^m⟮E, F⟯) (ω₂ : Ω^n⟮E, F'⟯) (f : F →L[ℝ] F' →L[ℝ] F'') :
     Ω^(m + n)⟮E, F''⟯ := fun e => ContinuousAlternatingMap.wedge_product (ω₁ e) (ω₂ e) f

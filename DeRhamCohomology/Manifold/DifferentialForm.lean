@@ -61,16 +61,40 @@ theorem mpullback_smul (f : M → N) (c : ℝ) :
 
 end mpullback
 
+section miprod
+
+variable
+  [ChartedSpace (EM [⋀^Fin (m + 1)]→L[ℝ] ℝ) 𝒜⟮ℝ,Fin (m + 1);EM,TangentSpace IM;ℝ,Trivial M ℝ⟯]
+  (α : Ω^k,m + 1⟮EM, IM, M⟯)
+  (V : Π (x : M), TangentSpace IM x)
+  [Π (x : M), NormedAddCommGroup (TangentSpace IM x)]
+
+def miprod : (x : M) → TangentSpace IM x [⋀^Fin m]→L[ℝ] Trivial M ℝ x :=
+    fun x => iprod (writtenInExtChartAt IM (𝓘(ℝ, (EM [⋀^Fin (m + 1)]→L[ℝ] ℝ))) x
+      (fun y ↦ TotalSpace.mk' (EM [⋀^Fin (m + 1)]→L[ℝ] ℝ) y (α.toFun y)))
+        (writtenInExtChartAt IM 𝓘(ℝ, EM) x (fun (x : M) ↦ (V x : TangentSpace IM x)))
+          (extChartAt IM x x)
+
+end miprod
+
 section mwedge_product
 
 variable
-  (α : (x : M) → TangentSpace IM x [⋀^Fin m]→L[ℝ] Trivial M ℝ x)
-  (β : (x : M) → TangentSpace IM x [⋀^Fin n]→L[ℝ] Trivial M ℝ x)
+  [ChartedSpace (EM [⋀^Fin m]→L[ℝ] ℝ) 𝒜⟮ℝ,Fin m;EM,TangentSpace IM;ℝ,Trivial M ℝ⟯] -- Shouldn't this just be true already?
+  [ChartedSpace (EM [⋀^Fin n]→L[ℝ] ℝ) 𝒜⟮ℝ,Fin n;EM,TangentSpace IM;ℝ,Trivial M ℝ⟯] -- Shouldn't this just be true already?
+  (α : Ω^k,m⟮EM, IM, M⟯)
+  (β : Ω^k,n⟮EM, IM, M⟯)
   [Π (x : M), NormedAddCommGroup (TangentSpace IM x)]
 
-/- Place for wedge product definitions etc. -/
-def mwedge_product (f : ℝ →L[ℝ] ℝ →L[ℝ] ℝ) : (x : M) → TangentSpace IM x [⋀^Fin (m + n)]→L[ℝ] Trivial M ℝ x :=
-    sorry
+/- Place for wedge product definitions -/
+def mwedge_product : (x : M) → TangentSpace IM x [⋀^Fin (m + n)]→L[ℝ] Trivial M ℝ x :=
+    fun x => wedge_product
+      (ω₁ := (writtenInExtChartAt IM (𝓘(ℝ, (EM [⋀^Fin m]→L[ℝ] ℝ))) x
+        (fun y ↦ TotalSpace.mk' (EM [⋀^Fin m]→L[ℝ] ℝ) y (α.toFun y))))
+          (ω₂ := (writtenInExtChartAt IM (𝓘(ℝ, (EM [⋀^Fin n]→L[ℝ] ℝ))) x
+            (fun y ↦ TotalSpace.mk' (EM [⋀^Fin n]→L[ℝ] ℝ) y (β.toFun y))))
+              (ContinuousLinearMap.mul ℝ ℝ)
+                (extChartAt IM x x)
 
 end mwedge_product
 
