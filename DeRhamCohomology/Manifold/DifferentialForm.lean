@@ -65,11 +65,10 @@ section miprod
 
 variable
   [ChartedSpace (EM [⋀^Fin (m + 1)]→L[ℝ] ℝ) 𝒜⟮ℝ,Fin (m + 1);EM,TangentSpace IM;ℝ,Trivial M ℝ⟯]
-  (α : Ω^k,m + 1⟮EM, IM, M⟯)
-  (V : Π (x : M), TangentSpace IM x)
   [Π (x : M), NormedAddCommGroup (TangentSpace IM x)]
 
-def miprod : (x : M) → TangentSpace IM x [⋀^Fin m]→L[ℝ] Trivial M ℝ x :=
+def miprod (α : Ω^k,m + 1⟮EM, IM, M⟯) (V : Π (x : M), TangentSpace IM x) :
+    (x : M) → TangentSpace IM x [⋀^Fin m]→L[ℝ] Trivial M ℝ x :=
     fun x => iprod (writtenInExtChartAt IM (𝓘(ℝ, (EM [⋀^Fin (m + 1)]→L[ℝ] ℝ))) x
       (fun y ↦ TotalSpace.mk' (EM [⋀^Fin (m + 1)]→L[ℝ] ℝ) y (α.toFun y)))
         (writtenInExtChartAt IM 𝓘(ℝ, EM) x (fun (x : M) ↦ (V x : TangentSpace IM x)))
@@ -82,12 +81,11 @@ section mwedge_product
 variable
   [ChartedSpace (EM [⋀^Fin m]→L[ℝ] ℝ) 𝒜⟮ℝ,Fin m;EM,TangentSpace IM;ℝ,Trivial M ℝ⟯] -- Shouldn't this just be true already?
   [ChartedSpace (EM [⋀^Fin n]→L[ℝ] ℝ) 𝒜⟮ℝ,Fin n;EM,TangentSpace IM;ℝ,Trivial M ℝ⟯] -- Shouldn't this just be true already?
-  (α : Ω^k,m⟮EM, IM, M⟯)
-  (β : Ω^k,n⟮EM, IM, M⟯)
   [Π (x : M), NormedAddCommGroup (TangentSpace IM x)]
 
 /- Place for wedge product definitions -/
-def mwedge_product : (x : M) → TangentSpace IM x [⋀^Fin (m + n)]→L[ℝ] Trivial M ℝ x :=
+def mwedge_product (α : Ω^k,m⟮EM, IM, M⟯) (β : Ω^k,n⟮EM, IM, M⟯) :
+    (x : M) → TangentSpace IM x [⋀^Fin (m + n)]→L[ℝ] Trivial M ℝ x :=
     fun x => wedge_product
       (ω₁ := (writtenInExtChartAt IM (𝓘(ℝ, (EM [⋀^Fin m]→L[ℝ] ℝ))) x
         (fun y ↦ TotalSpace.mk' (EM [⋀^Fin m]→L[ℝ] ℝ) y (α.toFun y))))
