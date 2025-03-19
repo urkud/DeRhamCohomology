@@ -120,12 +120,6 @@ lemma mederivWithin_apply (s : Set M) (x : M) :
         ((extChartAt IM x).symm ⁻¹' s ∩ range IM)) (extChartAt IM x x) :=
   rfl
 
-lemma mederivWithin_eq_ederivWithin [ChartedSpace (EM [⋀^Fin m]→L[ℝ] ℝ) 𝒜⟮ℝ,Fin m;EM,TangentSpace 𝓘(ℝ, EM);ℝ,Trivial EM ℝ⟯]
-    {α : Ω^k,m⟮EM, 𝓘(ℝ, EM), EM⟯} {s : Set EM} : mederivWithin 𝓘(ℝ, EM) EM α s = ederivWithin α s := by
-  ext1 x
-  simp [mederivWithin_apply]
-  sorry
-
 def mederiv (x : M) : TangentSpace IM x [⋀^Fin (m + 1)]→L[ℝ] Trivial M ℝ x :=
     mederivWithin IM M α univ x
 
