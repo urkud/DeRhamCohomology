@@ -1,5 +1,6 @@
 import Mathlib.Geometry.Manifold.VectorBundle.Basic
 import DeRhamCohomology.VectorBundle.Alternating
+import Mathlib.Analysis.Calculus.ContDiff.CPolynomial
 
 noncomputable section
 
@@ -38,18 +39,51 @@ variable {F₃ F₄ : Type*}
 
 local notation "AE₁E₂" => TotalSpace (F₁ [⋀^ι]→L[𝕜] F₂) ⋀^ι⟮𝕜; F₁, E₁; F₂, E₂⟯
 
-theorem _root_.ContinuousAlternatingMap.compContinuousLinearMap_contMDiff :
-    ContMDiff (𝓘(𝕜, F₁ [⋀^ι]→L[𝕜] F₂).prod 𝓘(𝕜, F₁ →L[𝕜] F₁)) (𝓘(𝕜, F₁ [⋀^ι]→L[𝕜] F₂)) ⊤
-    (fun (p : (F₁ [⋀^ι]→L[𝕜] F₂) × (F₁ →L[𝕜] F₁)) ↦ (ContinuousAlternatingMap.compContinuousLinearMap p.1 p.2)) := by
-  rw[ContMDiff]
-  intro m
-  sorry
+-- move this to `ContinuousMultilinearMap`
+theorem _root_.ContinuousMultilinearMap.compContinuousLinearMapL_diag_contDiff :
+  ContDiff 𝕜 ⊤ (fun p : F₁ →L[𝕜] F₁ ↦
+  (ContinuousMultilinearMap.compContinuousLinearMapL (fun _ : ι ↦ p) :
+    ContinuousMultilinearMap 𝕜 (fun _ ↦ F₁) F₂ →L[𝕜] ContinuousMultilinearMap 𝕜 (fun _ ↦ F₁) F₂)) := by
+  let φ : ContinuousMultilinearMap 𝕜 (fun _ : ι ↦ F₁ →L[𝕜] F₁) _ :=
+    ContinuousMultilinearMap.compContinuousLinearMapContinuousMultilinear
+    𝕜 (fun _ : ι ↦ F₁) (fun _ : ι ↦ F₁) F₂
+  show ContDiff 𝕜 ⊤ (fun p : F₁ →L[𝕜] F₁ ↦ φ (fun _ : ι ↦ p))
+  apply ContDiff.comp
+  · apply ContinuousMultilinearMap.contDiff
+  · apply contDiff_pi.mpr
+    intro _
+    apply contDiff_id
 
 -- move this to `ContinuousAlternatingMap`
 theorem _root_.ContinuousAlternatingMap.compContinuousLinearMapCLM_contMDiff :
     ContMDiff (𝓘(𝕜, (F₁ →L[𝕜] F₁))) (𝓘(𝕜, ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (F₁ [⋀^ι]→L[𝕜] F₂)))) ⊤
     (fun p : (F₁ →L[𝕜] F₁) ↦ (ContinuousAlternatingMap.compContinuousLinearMapCLM p :
       ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (F₁ [⋀^ι]→L[𝕜] F₂)))) := by
+  rw [contMDiff_iff_contDiff]
+  
+  -- Want to get
+  --   ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (F₁ [⋀^ι]→L[𝕜] F₂))
+  --     ≅L[𝕜] ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] ContinuousMultilinearMap 𝕜 (fun x ↦ F₁) F₂)
+
+  -- Need (F₁ [⋀^ι]→L[𝕜] F₂) ≅L[𝕜] (ContinuousMultilinearMap 𝕜 (fun x ↦ F₁) F₂) Doesnt exist!
+
+  let φ₁ : (F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (ContinuousMultilinearMap 𝕜 (ι := ι) (fun x ↦ F₁) F₂) := sorry
+  --let Φ₁ : ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (F₁ [⋀^ι]→L[𝕜] F₂)) ≃L[𝕜] _ := sorry
+
+  let φ : (F₁ [⋀^ι]→L[𝕜] F₂) →ₗᵢ[𝕜] _ := ContinuousAlternatingMap.toContinuousMultilinearMapLI
+  let Φ : ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (F₁ [⋀^ι]→L[𝕜] F₂)) →ₗᵢ[𝕜] _ := φ.compLeft _ (RingHom.id _)
+
+  #check ContinuousAlternatingMap.toContinuousMultilinearMapLI
+
+  -- rw[← Φ.comp_contDiff_iff]
+
+  #check LinearIsometry.comp_continuous_iff
+  #check ContinuousLinearEquiv.comp_contDiff_iff -- Cannot use this :(
+  #check ContinuousMultilinearMap.compContinuousLinearMapL_diag_continuous
+  #check ContMDiff.clm_comp
+
+
+
   sorry
   -- let φ : (F₁ [⋀^ι]→L[𝕜] F₂) →ₗᵢ[𝕜] _ := toContinuousMultilinearMapLI
   -- let Φ : ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (F₁ [⋀^ι]→L[𝕜] F₂)) →ₗᵢ[𝕜] _ := φ.compLeft _ (RingHom.id _)
