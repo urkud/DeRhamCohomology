@@ -60,7 +60,7 @@ theorem _root_.ContinuousAlternatingMap.compContinuousLinearMapCLM_contMDiff :
     (fun p : (F₁ →L[𝕜] F₁) ↦ (ContinuousAlternatingMap.compContinuousLinearMapCLM p :
       ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (F₁ [⋀^ι]→L[𝕜] F₂)))) := by
   rw [contMDiff_iff_contDiff]
-  
+
   -- Want to get
   --   ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] (F₁ [⋀^ι]→L[𝕜] F₂))
   --     ≅L[𝕜] ((F₁ [⋀^ι]→L[𝕜] F₂) →L[𝕜] ContinuousMultilinearMap 𝕜 (fun x ↦ F₁) F₂)
@@ -77,10 +77,7 @@ theorem _root_.ContinuousAlternatingMap.compContinuousLinearMapCLM_contMDiff :
 
   -- rw[← Φ.comp_contDiff_iff]
 
-  #check LinearIsometry.comp_continuous_iff
   #check ContinuousLinearEquiv.comp_contDiff_iff -- Cannot use this :(
-  #check ContinuousMultilinearMap.compContinuousLinearMapL_diag_continuous
-  #check ContMDiff.clm_comp
 
 
 
@@ -122,7 +119,6 @@ theorem contMDiffOn_continuousAlternatingMapCoordChange
           refine ContMDiff.clm_apply ?hg ?hf
           exact contMDiff_const
           exact contMDiff_snd
-    -- proof of hs
     exact ContMDiff.prod_mk contMDiff_fst ht
   exact ((contMDiff_snd.clm_comp ((ContinuousAlternatingMap.compContinuousLinearMapCLM_contMDiff
     (𝕜 := 𝕜) (ι := ι) (F₁ := F₁) (F₂ := F₂)).comp contMDiff_fst)).comp hs).comp_contMDiffOn
