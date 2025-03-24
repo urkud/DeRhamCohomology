@@ -15,7 +15,7 @@ variable
   {HM : Type*} [TopologicalSpace HM]
   (IM : ModelWithCorners ℝ EM HM)
   (M : Type*) [TopologicalSpace M] [ChartedSpace HM M] [SmoothManifoldWithCorners IM M]
-  {m n : ℕ} {k : ℕ∞}
+  {m n : ℕ} {k l : ℕ∞}
 
 -- Setup for Differential Form Space
 notation "Ω^" k "," m "⟮" EM "," IM "," M "⟯" =>
@@ -84,7 +84,7 @@ variable
   [Π (x : M), NormedAddCommGroup (TangentSpace IM x)]
 
 /- Place for wedge product definitions -/
-def mwedge_product (α : Ω^k,m⟮EM, IM, M⟯) (β : Ω^k,n⟮EM, IM, M⟯) :
+def mwedge_product (α : Ω^k,m⟮EM, IM, M⟯) (β : Ω^l,n⟮EM, IM, M⟯) :
     (x : M) → TangentSpace IM x [⋀^Fin (m + n)]→L[ℝ] Trivial M ℝ x :=
     fun x => wedge_product
       (ω₁ := (writtenInExtChartAt IM (𝓘(ℝ, (EM [⋀^Fin m]→L[ℝ] ℝ))) x
