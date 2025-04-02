@@ -100,6 +100,7 @@ def domDomCongr (σ : ι ≃ ι') (f : M [⋀^ι]→L[𝕜] N) : M [⋀^ι']→L
       f.map_eq_zero_of_eq (v ∘ σ) (i := σ.symm i) (j := σ.symm j)
         (by simpa using hv) (σ.symm.injective.ne hij) }
 
+@[simp]
 theorem domDomCongr_apply (σ : ι ≃ ι') (f : M [⋀^ι]→L[𝕜] N) (v : ι' → M) :
     (domDomCongr σ f) v = f (v ∘ σ) :=
   rfl

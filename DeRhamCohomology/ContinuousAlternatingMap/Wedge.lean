@@ -56,6 +56,8 @@ theorem wedge_mul_assoc (g : M [⋀^Fin m]→L[𝕜] 𝕜) (h : M [⋀^Fin n]→
     ContinuousMultilinearMap.sum_apply, wedge_product_def, uncurryFinAdd, domDomCongr_apply,
     uncurrySum_apply, ContinuousMultilinearMap.sum_apply]
   rw[wedge_product, wedge_product]
+  rw[uncurryFinAdd, uncurryFinAdd]
+  -- Want to have functionality to partially unpack
   sorry
 
 /- Left distributivity of wedge product -/
@@ -147,8 +149,9 @@ theorem wedge_smul (g : M [⋀^Fin m]→L[𝕜] 𝕜) (h : M [⋀^Fin n]→L[�
     smul_comm, smul_apply, smul_eq_mul, ← mul_assoc, mul_comm]
 
 /- Antisymmetry of multiplication wedge product -/
-theorem wedge_antisymm (g : M [⋀^Fin m]→L[𝕜] 𝕜) (h : M [⋀^Fin n]→L[𝕜] 𝕜) (x : Fin (m + n) → M) :
-    (g ∧[𝕜] h) x = ((-1 : 𝕜)^(m*n) • (h ∧[𝕜] g)).domDomCongr finAddFlip x := by
+theorem wedge_antisymm (g : M [⋀^Fin m]→L[𝕜] 𝕜) (h : M [⋀^Fin n]→L[𝕜] 𝕜) :
+    (g ∧[𝕜] h) = ((-1 : 𝕜)^(m*n) • (h ∧[𝕜] g)).domDomCongr finAddFlip := by
+  ext x
   rw[domDomCongr_apply, smul_apply, wedge_product_mul, uncurryFinAdd, domDomCongr_apply,
     uncurrySum_apply, ContinuousMultilinearMap.sum_apply, wedge_product_mul,
     uncurryFinAdd, domDomCongr_apply, uncurrySum_apply, ContinuousMultilinearMap.sum_apply]
@@ -157,6 +160,7 @@ theorem wedge_antisymm (g : M [⋀^Fin m]→L[𝕜] 𝕜) (h : M [⋀^Fin n]→L
   rw[Finset.smul_sum]
   -- Search for Equiv between Equiv.Perm.ModSumCongr (Fin n) (Fin m) and swap Or make it yourself
   -- After it works the same way as normal with removing sum and working over summands
+  -- Not sure if this is the approach we are looking for?
   have h2 : Equiv.Perm.ModSumCongr (Fin m) (Fin n) ≃ Equiv.Perm.ModSumCongr (Fin n) (Fin m) := by sorry
   rw[← Equiv.sum_comp h2]
   apply Finset.sum_congr rfl
@@ -186,49 +190,99 @@ theorem wedge_antisymm (g : M [⋀^Fin m]→L[𝕜] 𝕜) (h : M [⋀^Fin n]→L
 
 variable {M : Type*} [NormedAddCommGroup M] [NormedSpace ℝ M]
 
+@[simps!]
+def sumCommPerm : Equiv.Perm (Fin m ⊕ Fin m) ≃ Equiv.Perm (Fin m ⊕ Fin m) :=
+  MulAut.conj (Equiv.sumComm (Fin m) (Fin m))
+
+@[simp]
+lemma sumComm_inv : (Equiv.sumComm (Fin m) (Fin m))⁻¹ = (Equiv.sumComm (Fin m) (Fin m)) := by
+  ext i
+  simp [Equiv.Perm.inv_def]
+
+@[simp]
+lemma sumCommPerm_sumCommPerm (σ₁ : Equiv.Perm (Fin m ⊕ Fin m)) :
+    sumCommPerm (sumCommPerm σ₁) = σ₁ := by
+  ext i
+  simp
+
+open Equiv.Perm in
+lemma sumCommPerm_spec (a b : Equiv.Perm (Fin m ⊕ Fin m))
+    (h : (QuotientGroup.leftRel (Equiv.Perm.sumCongrHom (Fin m) (Fin m)).range) a b) :
+    (Quot.mk (QuotientGroup.leftRel (sumCongrHom (Fin m) (Fin m)).range) ∘ sumCommPerm) a =
+      (Quot.mk (QuotientGroup.leftRel (sumCongrHom (Fin m) (Fin m)).range) ∘ sumCommPerm) b := by
+  apply Quot.sound
+  rw [@QuotientGroup.leftRel_apply] at h ⊢
+  simp only [sumCommPerm, EquivLike.coe_coe, MulAut.conj_apply, sumComm_inv,
+    mul_assoc, mul_inv_rev, sumCongrHom_apply, Prod.exists]
+  have (c) : Equiv.sumComm (Fin m) (Fin m) * (Equiv.sumComm (Fin m) (Fin m) * c) = c := by
+    ext
+    simp [mul_def]
+  rw[this]
+  simp at h
+  rcases h with ⟨σ, τ, h⟩
+  rw[← mul_assoc _ b, ← h]
+  simp
+  use τ, σ
+  ext (x|y) <;> simp
+
+@[simp]
+lemma sign_sumCommPerm (σ₁ : Equiv.Perm (Fin m ⊕ Fin m)) :
+    Equiv.Perm.sign (sumCommPerm σ₁) = Equiv.Perm.sign σ₁ := by
+  simp [sumCommPerm]
+  rw[mul_comm, ← mul_assoc]
+  simp
+
+open Equiv.Perm in
+@[simps]
+def finAddFlip_equiv : ModSumCongr (Fin m) (Fin m) ≃ ModSumCongr (Fin m) (Fin m) where
+  toFun := Quot.lift (Quot.mk _ ∘ sumCommPerm) sumCommPerm_spec
+  invFun := Quot.lift (Quot.mk _ ∘ sumCommPerm) sumCommPerm_spec
+  left_inv := by
+    intro x
+    rcases x with ⟨σ₁⟩
+    simp
+  right_inv := by
+    intro x
+    rcases x with ⟨σ₁⟩
+    simp
+
+lemma domDomCongr_finAddFlip_wedge_self (g : M [⋀^Fin m]→L[ℝ] ℝ) :
+    domDomCongr finAddFlip (g∧[ℝ]g) = (g∧[ℝ]g) := by
+  ext x
+  rw[wedge_product_mul, uncurryFinAdd, domDomCongr_apply, domDomCongr_apply, uncurrySum_apply, ContinuousMultilinearMap.sum_apply,
+    wedge_product_mul, uncurryFinAdd, domDomCongr_apply, uncurrySum_apply, ContinuousMultilinearMap.sum_apply]
+  conv_rhs => rw[← Equiv.sum_comp finAddFlip_equiv]
+  apply Finset.sum_congr rfl
+  rintro σ -
+  rcases σ with ⟨σ₁⟩
+  simp only [Function.comp_apply, finAddFlip_equiv_apply]
+  rw[uncurrySum.summand_mk]
+  rw[uncurrySum.summand_mk]
+  rw[ContinuousMultilinearMap.smul_apply, ContinuousMultilinearMap.domDomCongr_apply,
+    ContinuousMultilinearMap.uncurrySum_apply, ContinuousMultilinearMap.flipMultilinear_apply,
+    coe_toContinuousMultilinearMap, ContinuousMultilinearMap.flipAlternating_apply,
+    coe_toContinuousMultilinearMap, ContinuousLinearMap.compContinuousAlternatingMap₂_apply,
+    ContinuousLinearMap.mul_apply']
+  rw[ContinuousMultilinearMap.smul_apply, ContinuousMultilinearMap.domDomCongr_apply,
+    ContinuousMultilinearMap.uncurrySum_apply, ContinuousMultilinearMap.flipMultilinear_apply,
+    coe_toContinuousMultilinearMap, ContinuousMultilinearMap.flipAlternating_apply,
+    coe_toContinuousMultilinearMap, ContinuousLinearMap.compContinuousAlternatingMap₂_apply,
+    ContinuousLinearMap.mul_apply']
+  simp [Function.comp_def, finAddFlip, mul_comm]
+
 /- Corollary of `wedge_antisymm` saying that a wedge of g with itself is
 zero if m is odd. -/
 theorem wedge_self_odd_zero (g : M [⋀^Fin m]→L[ℝ] ℝ) (m_odd : Odd m) :
     (g ∧[ℝ] g) = 0 := by
+  let h := wedge_antisymm g g
+  rw[Odd.neg_one_pow (Odd.mul m_odd m_odd)] at h
+  suffices (g ∧[ℝ] g) = -(g ∧[ℝ] g) by
+    rw[← sub_eq_zero, sub_neg_eq_add, DFunLike.ext_iff] at this
+    ext x
+    simpa using this x
+  conv_rhs => rw[← domDomCongr_finAddFlip_wedge_self]
+  conv_lhs => rw[h]
   ext x
-  let h := wedge_antisymm g g x
-  rw[Odd.neg_one_pow (Odd.mul m_odd m_odd), domDomCongr_apply, smul_apply] at h
-  have h1 : (g∧[ContinuousLinearMap.mul ℝ ℝ]g) x = (g∧[ContinuousLinearMap.mul ℝ ℝ]g) (x ∘ ⇑finAddFlip) := by
-    rw[wedge_product_mul, uncurryFinAdd, domDomCongr_apply, uncurrySum_apply, ContinuousMultilinearMap.sum_apply,
-      wedge_product_mul, uncurryFinAdd, domDomCongr_apply, uncurrySum_apply, ContinuousMultilinearMap.sum_apply]
-    apply Finset.sum_congr rfl
-    intro σ hσ
-    rcases σ with ⟨σ₁⟩
-    rw[uncurrySum.summand_mk]
-    rw[ContinuousMultilinearMap.smul_apply, ContinuousMultilinearMap.domDomCongr_apply,
-      ContinuousMultilinearMap.uncurrySum_apply, ContinuousMultilinearMap.flipMultilinear_apply,
-      coe_toContinuousMultilinearMap, ContinuousMultilinearMap.flipAlternating_apply,
-      coe_toContinuousMultilinearMap, ContinuousLinearMap.compContinuousAlternatingMap₂_apply,
-      ContinuousLinearMap.mul_apply']
-    rw[ContinuousMultilinearMap.smul_apply, ContinuousMultilinearMap.domDomCongr_apply,
-      ContinuousMultilinearMap.uncurrySum_apply, ContinuousMultilinearMap.flipMultilinear_apply,
-      coe_toContinuousMultilinearMap, ContinuousMultilinearMap.flipAlternating_apply,
-      coe_toContinuousMultilinearMap, ContinuousLinearMap.compContinuousAlternatingMap₂_apply,
-      ContinuousLinearMap.mul_apply']
-    simp only [smul_left_cancel_iff]
-    /- We want to remove `finAddFlip` from this equation by essentially swapping `Sum.inl` and `Sum.inr` how? -/
-    simp [Function.comp_def, ]
-    have h2 : (fun x_1 ↦ x (finAddFlip (finSumFinEquiv (σ₁ (Sum.inl x_1))))) = fun x_1 ↦ x (finSumFinEquiv (σ₁ (Sum.inr x_1))) := by
-      funext n
-      congr 1
-      ext
-      rw[finAddFlip_finSumFinEquiv, Equiv.sumComm_apply]
-      congr 1
-      refine (Equiv.apply_eq_iff_eq finSumFinEquiv).mpr ?h.e_a.h.e_self.a
-      sorry
-    have h3 : (fun x_1 ↦ x (finAddFlip (finSumFinEquiv (σ₁ (Sum.inr x_1))))) = fun x_1 ↦ x (finSumFinEquiv (σ₁ (Sum.inl x_1))) := by
-      funext n
-      congr 1
-      sorry
-    rw[h2, h3, mul_comm]
-  rw[← h1, smul_eq_mul, neg_mul, one_mul] at h
-  apply sub_eq_zero_of_eq at h
-  rw[sub_neg_eq_add, add_self_eq_zero] at h
-  exact h
+  simp
 
 end wedge
