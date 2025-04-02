@@ -309,7 +309,8 @@ theorem wedge_antisymm (ω : Ω^m⟮E, ℝ⟯) (τ : Ω^n⟮E, ℝ⟯) :
   ext x y
   rw[wedge_product_mul, domDomCongr_apply, _root_.smul_apply,
     wedge_product_mul, ← ContinuousAlternatingMap.domDomCongr_apply]
-  exact ContinuousAlternatingMap.wedge_antisymm (ω x) (τ x) y
+  let h := ContinuousAlternatingMap.wedge_antisymm (ω x) (τ x)
+  exact congrFun (congrArg DFunLike.coe h) y
 
 variable {M : Type*} [NormedAddCommGroup M] [NormedSpace ℝ M]
 
