@@ -148,6 +148,46 @@ theorem wedge_smul (g : M [⋀^Fin m]→L[𝕜] 𝕜) (h : M [⋀^Fin n]→L[�
     ContinuousLinearMap.compContinuousAlternatingMap₂_apply, ContinuousLinearMap.mul_apply', ← smul_assoc,
     smul_comm, smul_apply, smul_eq_mul, ← mul_assoc, mul_comm]
 
+@[simps!]
+def sumCommPerm : Equiv.Perm (Fin m ⊕ Fin n) ≃ Equiv.Perm (Fin n ⊕ Fin m) :=
+  Equiv.permCongr (Equiv.sumComm (Fin m) (Fin n))
+
+@[simp]
+lemma sumCommPerm_sumCommPerm (σ₁ : Equiv.Perm (Fin m ⊕ Fin n)) :
+    sumCommPerm (sumCommPerm σ₁) = σ₁ := by
+  ext i
+  simp
+
+open Equiv.Perm in
+lemma sumCommPerm_spec (a b : Equiv.Perm (Fin m ⊕ Fin n))
+    (h : (QuotientGroup.leftRel (Equiv.Perm.sumCongrHom (Fin m) (Fin n)).range) a b) :
+    (Quot.mk (QuotientGroup.leftRel (sumCongrHom (Fin n) (Fin m)).range) ∘ sumCommPerm) a =
+      (Quot.mk (QuotientGroup.leftRel (sumCongrHom (Fin n) (Fin m)).range) ∘ sumCommPerm) b := by
+  apply Quot.sound
+  rw [@QuotientGroup.leftRel_apply] at h ⊢
+  simp only [sumCommPerm, Equiv.permCongr_def]
+  rw [inv_def, mul_def]
+  sorry
+
+@[simp]
+lemma sign_sumCommPerm (σ₁ : Equiv.Perm (Fin m ⊕ Fin n)) :
+    Equiv.Perm.sign (sumCommPerm σ₁) = Equiv.Perm.sign σ₁ := by
+  simp only [sumCommPerm, Equiv.Perm.sign_permCongr]
+
+open Equiv.Perm in
+@[simps!]
+def finAddFlip_equiv : ModSumCongr (Fin m) (Fin n) ≃ ModSumCongr (Fin n) (Fin m) where
+  toFun := Quot.lift (Quot.mk _ ∘ sumCommPerm) sumCommPerm_spec
+  invFun := Quot.lift (Quot.mk _ ∘ sumCommPerm) sumCommPerm_spec
+  left_inv := by
+    intro x
+    rcases x with ⟨σ₁⟩
+    simp
+  right_inv := by
+    intro x
+    rcases x with ⟨σ₁⟩
+    simp
+
 /- Antisymmetry of multiplication wedge product -/
 theorem wedge_antisymm (g : M [⋀^Fin m]→L[𝕜] 𝕜) (h : M [⋀^Fin n]→L[𝕜] 𝕜) :
     (g ∧[𝕜] h) = ((-1 : 𝕜)^(m*n) • (h ∧[𝕜] g)).domDomCongr finAddFlip := by
@@ -155,43 +195,32 @@ theorem wedge_antisymm (g : M [⋀^Fin m]→L[𝕜] 𝕜) (h : M [⋀^Fin n]→L
   rw[domDomCongr_apply, smul_apply, wedge_product_mul, uncurryFinAdd, domDomCongr_apply,
     uncurrySum_apply, ContinuousMultilinearMap.sum_apply, wedge_product_mul,
     uncurryFinAdd, domDomCongr_apply, uncurrySum_apply, ContinuousMultilinearMap.sum_apply]
-  /- We cannot apply `uncurrySum.summand` until we have removed the sums
-  How do we equalise the sums using `finAddFlip`?? -/
+  conv_lhs => rw[← Equiv.sum_comp finAddFlip_equiv]
   rw[Finset.smul_sum]
-  -- Search for Equiv between Equiv.Perm.ModSumCongr (Fin n) (Fin m) and swap Or make it yourself
-  -- After it works the same way as normal with removing sum and working over summands
-  -- Not sure if this is the approach we are looking for?
-  have h2 : Equiv.Perm.ModSumCongr (Fin m) (Fin n) ≃ Equiv.Perm.ModSumCongr (Fin n) (Fin m) := by sorry
-  rw[← Equiv.sum_comp h2]
   apply Finset.sum_congr rfl
   intro σ hσ
   rcases σ with ⟨σ₁⟩
+  simp only [Function.comp_apply, finAddFlip_equiv_apply]
   rw[uncurrySum.summand_mk]
   rw[ContinuousMultilinearMap.smul_apply, ContinuousMultilinearMap.domDomCongr_apply,
     ContinuousMultilinearMap.uncurrySum_apply, ContinuousMultilinearMap.flipMultilinear_apply,
     coe_toContinuousMultilinearMap, ContinuousMultilinearMap.flipAlternating_apply,
     coe_toContinuousMultilinearMap, ContinuousLinearMap.compContinuousAlternatingMap₂_apply,
     ContinuousLinearMap.mul_apply']
-  -- Not completely how it needs to be I think. I assume we want the h and g swapped and all Fin m swapped with Fin n.
-  have h3 :
-    (uncurrySum.summand ((ContinuousLinearMap.mul 𝕜 𝕜).compContinuousAlternatingMap₂ h g)
-      (h2 (Quot.mk (⇑(QuotientGroup.leftRel (Equiv.Perm.sumCongrHom (Fin m) (Fin n)).range)) σ₁)))
-        ((x ∘ ⇑finAddFlip) ∘ ⇑finSumFinEquiv) = (-1 : 𝕜) ^ (m * n) • (uncurrySum.summand ((ContinuousLinearMap.mul 𝕜 𝕜).compContinuousAlternatingMap₂ g h)
-          (Quot.mk (⇑(QuotientGroup.leftRel (Equiv.Perm.sumCongrHom (Fin m) (Fin n)).range)) σ₁))
-            (x ∘ ⇑finSumFinEquiv) := by sorry
-  rw[h3, ← smul_assoc, smul_eq_mul, smul_eq_mul, pow_mul_pow_eq_one (m * n) (by simp), one_mul]
-  -- Finish off
   rw[uncurrySum.summand_mk]
   rw[ContinuousMultilinearMap.smul_apply, ContinuousMultilinearMap.domDomCongr_apply,
     ContinuousMultilinearMap.uncurrySum_apply, ContinuousMultilinearMap.flipMultilinear_apply,
     coe_toContinuousMultilinearMap, ContinuousMultilinearMap.flipAlternating_apply,
     coe_toContinuousMultilinearMap, ContinuousLinearMap.compContinuousAlternatingMap₂_apply,
     ContinuousLinearMap.mul_apply']
+  simp only [sign_sumCommPerm, sumCommPerm_apply_apply, Function.comp_apply]
+  simp [Function.comp_def, finAddFlip]
+  sorry
 
 variable {M : Type*} [NormedAddCommGroup M] [NormedSpace ℝ M]
 
 @[simps!]
-def sumCommPerm : Equiv.Perm (Fin m ⊕ Fin m) ≃ Equiv.Perm (Fin m ⊕ Fin m) :=
+def sumCommPerm_eqFin : Equiv.Perm (Fin m ⊕ Fin m) ≃ Equiv.Perm (Fin m ⊕ Fin m) :=
   MulAut.conj (Equiv.sumComm (Fin m) (Fin m))
 
 @[simp]
@@ -200,19 +229,19 @@ lemma sumComm_inv : (Equiv.sumComm (Fin m) (Fin m))⁻¹ = (Equiv.sumComm (Fin m
   simp [Equiv.Perm.inv_def]
 
 @[simp]
-lemma sumCommPerm_sumCommPerm (σ₁ : Equiv.Perm (Fin m ⊕ Fin m)) :
-    sumCommPerm (sumCommPerm σ₁) = σ₁ := by
+lemma sumCommPerm_eqFin_sumCommPerm_eqFin (σ₁ : Equiv.Perm (Fin m ⊕ Fin m)) :
+    sumCommPerm_eqFin (sumCommPerm_eqFin σ₁) = σ₁ := by
   ext i
   simp
 
 open Equiv.Perm in
-lemma sumCommPerm_spec (a b : Equiv.Perm (Fin m ⊕ Fin m))
+lemma sumCommPerm_eqFin_spec (a b : Equiv.Perm (Fin m ⊕ Fin m))
     (h : (QuotientGroup.leftRel (Equiv.Perm.sumCongrHom (Fin m) (Fin m)).range) a b) :
-    (Quot.mk (QuotientGroup.leftRel (sumCongrHom (Fin m) (Fin m)).range) ∘ sumCommPerm) a =
-      (Quot.mk (QuotientGroup.leftRel (sumCongrHom (Fin m) (Fin m)).range) ∘ sumCommPerm) b := by
+    (Quot.mk (QuotientGroup.leftRel (sumCongrHom (Fin m) (Fin m)).range) ∘ sumCommPerm_eqFin) a =
+      (Quot.mk (QuotientGroup.leftRel (sumCongrHom (Fin m) (Fin m)).range) ∘ sumCommPerm_eqFin) b := by
   apply Quot.sound
   rw [@QuotientGroup.leftRel_apply] at h ⊢
-  simp only [sumCommPerm, EquivLike.coe_coe, MulAut.conj_apply, sumComm_inv,
+  simp only [sumCommPerm_eqFin, EquivLike.coe_coe, MulAut.conj_apply, sumComm_inv,
     mul_assoc, mul_inv_rev, sumCongrHom_apply, Prod.exists]
   have (c) : Equiv.sumComm (Fin m) (Fin m) * (Equiv.sumComm (Fin m) (Fin m) * c) = c := by
     ext
@@ -226,17 +255,17 @@ lemma sumCommPerm_spec (a b : Equiv.Perm (Fin m ⊕ Fin m))
   ext (x|y) <;> simp
 
 @[simp]
-lemma sign_sumCommPerm (σ₁ : Equiv.Perm (Fin m ⊕ Fin m)) :
-    Equiv.Perm.sign (sumCommPerm σ₁) = Equiv.Perm.sign σ₁ := by
-  simp [sumCommPerm]
+lemma sign_sumCommPerm_eqFin (σ₁ : Equiv.Perm (Fin m ⊕ Fin m)) :
+    Equiv.Perm.sign (sumCommPerm_eqFin σ₁) = Equiv.Perm.sign σ₁ := by
+  simp [sumCommPerm_eqFin]
   rw[mul_comm, ← mul_assoc]
   simp
 
 open Equiv.Perm in
 @[simps]
-def finAddFlip_equiv : ModSumCongr (Fin m) (Fin m) ≃ ModSumCongr (Fin m) (Fin m) where
-  toFun := Quot.lift (Quot.mk _ ∘ sumCommPerm) sumCommPerm_spec
-  invFun := Quot.lift (Quot.mk _ ∘ sumCommPerm) sumCommPerm_spec
+def finAddFlip_equiv_eqFin : ModSumCongr (Fin m) (Fin m) ≃ ModSumCongr (Fin m) (Fin m) where
+  toFun := Quot.lift (Quot.mk _ ∘ sumCommPerm_eqFin) sumCommPerm_eqFin_spec
+  invFun := Quot.lift (Quot.mk _ ∘ sumCommPerm_eqFin) sumCommPerm_eqFin_spec
   left_inv := by
     intro x
     rcases x with ⟨σ₁⟩
@@ -251,11 +280,11 @@ lemma domDomCongr_finAddFlip_wedge_self (g : M [⋀^Fin m]→L[ℝ] ℝ) :
   ext x
   rw[wedge_product_mul, uncurryFinAdd, domDomCongr_apply, domDomCongr_apply, uncurrySum_apply, ContinuousMultilinearMap.sum_apply,
     wedge_product_mul, uncurryFinAdd, domDomCongr_apply, uncurrySum_apply, ContinuousMultilinearMap.sum_apply]
-  conv_rhs => rw[← Equiv.sum_comp finAddFlip_equiv]
+  conv_rhs => rw[← Equiv.sum_comp finAddFlip_equiv_eqFin]
   apply Finset.sum_congr rfl
   rintro σ -
   rcases σ with ⟨σ₁⟩
-  simp only [Function.comp_apply, finAddFlip_equiv_apply]
+  simp only [Function.comp_apply, finAddFlip_equiv_eqFin_apply]
   rw[uncurrySum.summand_mk]
   rw[uncurrySum.summand_mk]
   rw[ContinuousMultilinearMap.smul_apply, ContinuousMultilinearMap.domDomCongr_apply,
