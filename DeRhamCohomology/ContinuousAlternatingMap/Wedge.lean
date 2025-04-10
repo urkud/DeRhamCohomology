@@ -48,6 +48,45 @@ theorem wedge_product_lsmul {g : M [⋀^Fin m]→L[𝕜] 𝕜} {h : M [⋀^Fin n
     (g ∧[ContinuousLinearMap.lsmul 𝕜 𝕜] h) x = uncurryFinAdd ((ContinuousLinearMap.lsmul 𝕜 𝕜).compContinuousAlternatingMap₂ g h) x :=
   rfl
 
+@[simps!]
+def addAssocPerm : Equiv.Perm ((Fin m ⊕ Fin n) ⊕ Fin p) ≃ Equiv.Perm (Fin m ⊕ Fin n ⊕ Fin p) :=
+    Equiv.permCongr (Equiv.sumAssoc (Fin m) (Fin n) (Fin p))
+
+@[simp]
+lemma addAssocPerm_symm_addAssocPerm (σ₁ : Equiv.Perm ((Fin m ⊕ Fin n) ⊕ Fin p)) :
+    addAssocPerm.symm (addAssocPerm σ₁) = σ₁ := by
+  exact Equiv.symm_apply_apply addAssocPerm σ₁
+
+-- open Equiv.Perm in
+-- lemma addAssocPerm_spec (a b : Equiv.Perm ((Fin m ⊕ Fin n) ⊕ Fin p))
+--     (h : (QuotientGroup.leftRel (Equiv.Perm.sumCongrHom (Fin m ⊕ Fin n) (Fin p)).range) a b) :
+--     (Quot.mk (QuotientGroup.leftRel (sumCongrHom (Fin n) (Fin m)).range) ∘ addAssocPerm) a =
+--       (Quot.mk (QuotientGroup.leftRel (sumCongrHom (Fin n) (Fin m)).range) ∘ addAssocPerm) b := by
+--   apply Quot.sound
+--   rw [@QuotientGroup.leftRel_apply] at h ⊢
+--   simp only [sumCommPerm, Equiv.permCongr_def]
+--   rw [inv_def, mul_def]
+--   sorry
+
+@[simp]
+lemma sign_addAssocPerm (σ₁ : Equiv.Perm ((Fin m ⊕ Fin n) ⊕ Fin p)) :
+    Equiv.Perm.sign (addAssocPerm σ₁) = Equiv.Perm.sign σ₁ := by
+  simp only [addAssocPerm, Equiv.Perm.sign_permCongr]
+
+-- open Equiv.Perm in
+-- @[simps!]
+-- def finAssoc_equiv : ModSumCongr (Fin (m + n)) (Fin p) ≃ ModSumCongr (Fin m) (Fin (n + p)) where
+--   toFun := Quot.lift (Quot.mk _ ∘ addAssocPerm) _
+--   invFun := Quot.lift (Quot.mk _ ∘ addAssocPerm) _
+--   left_inv := by
+--     intro x
+--     rcases x with ⟨σ₁⟩
+--     simp
+--   right_inv := by
+--     intro x
+--     rcases x with ⟨σ₁⟩
+--     simp
+
 /- Associativity of multiplication wedge product -/
 theorem wedge_mul_assoc (g : M [⋀^Fin m]→L[𝕜] 𝕜) (h : M [⋀^Fin n]→L[𝕜] 𝕜)
     (l : M [⋀^Fin p]→L[𝕜] 𝕜) (v : Fin (m + n + p) → M):
