@@ -305,7 +305,7 @@ theorem wedge_smul (ω : Ω^m⟮E, ℝ⟯) (τ : Ω^n⟮E, ℝ⟯) (c : ℝ) :
 
 /- Antisymmetry of multiplication wedge product -/
 theorem wedge_antisymm (ω : Ω^m⟮E, ℝ⟯) (τ : Ω^n⟮E, ℝ⟯) :
-    (ω ∧ τ) = DifferentialForm.domDomCongr finAddFlip ((-1 : ℝ)^(m*n) • (τ ∧ ω)) := by
+    (ω ∧ τ) = DifferentialForm.domDomCongr finAddCongr ((-1 : ℝ)^(m*n) • (τ ∧ ω)) := by
   ext x y
   rw[wedge_product_mul, domDomCongr_apply, _root_.smul_apply,
     wedge_product_mul, ← ContinuousAlternatingMap.domDomCongr_apply]
