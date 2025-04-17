@@ -105,6 +105,11 @@ theorem domDomCongr_apply (σ : ι ≃ ι') (f : M [⋀^ι]→L[𝕜] N) (v : ι
     (domDomCongr σ f) v = f (v ∘ σ) :=
   rfl
 
+@[simp]
+theorem domDomCongr_refl (f : M [⋀^ι]→L[𝕜] N) :
+    domDomCongr (Equiv.refl ι) f = f :=
+  rfl
+
 variable
   {M' : Type*} [NormedAddCommGroup M'] [NormedSpace 𝕜 M']
   [Fintype ι] [Fintype ι']
