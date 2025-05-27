@@ -102,6 +102,21 @@ def curryFin (f : E [⋀^Fin (n + 1)]→L[𝕜] F) : E →L[𝕜] E [⋀^Fin n]�
       apply le_of_eq
       exact ContinuousMultilinearMap.curryLeft_norm f.toContinuousMultilinearMap
 
+theorem curryFin_apply (f : E [⋀^Fin (n + 1)]→L[𝕜] F) (x : E) (m : Fin n → E) :
+    curryFin f x m = f (Fin.cons x m) :=
+  rfl
+
+theorem curryFin_add (f g : E [⋀^Fin (n + 1)]→L[𝕜] F) :
+    curryFin (f + g) = curryFin f + curryFin g := by
+  ext e v
+  simp [curryFin_apply]
+
+theorem curryFin_smul {M : Type*} [Monoid M] [DistribMulAction M F] [ContinuousConstSMul M F]
+    [SMulCommClass 𝕜 M F] (c : M) (f : E [⋀^Fin (n + 1)]→L[𝕜] F) :
+    curryFin (c • f) = c • curryFin f := by
+  ext e v
+  simp [curryFin_apply]
+
 variable [DecidableEq ι] [DecidableEq ι']
 
 /-- summand used in `ContinuousAlternatingMap.uncurrySum` -/
@@ -129,6 +144,21 @@ def uncurrySum.summand (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) (σ : 
       erw [← (f fun i ↦ v (σ₁ (Sum.inl i))).map_congr_perm fun i => v (σ₁ _)]
       simp [ContinuousMultilinearMap.flipAlternating]
       rfl
+
+theorem uncurrySum.summand_mk (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) (σ : Equiv.Perm (ι ⊕ ι')) :
+    uncurrySum.summand f (Quot.mk
+      (⇑(QuotientGroup.leftRel (Equiv.Perm.sumCongrHom ι ι').range)) σ) = Equiv.Perm.sign σ •
+        (ContinuousMultilinearMap.uncurrySum
+          (f.toContinuousMultilinearMap.flipAlternating.toContinuousMultilinearMap.flipMultilinear) :
+            ContinuousMultilinearMap 𝕜 (fun _ => E) F).domDomCongr σ :=
+  rfl
+
+theorem uncurrySum.summand_mk'' (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) (σ : Equiv.Perm (ι ⊕ ι')) :
+    uncurrySum.summand f (Quotient.mk'' σ) = Equiv.Perm.sign σ •
+      (ContinuousMultilinearMap.uncurrySum
+        (f.toContinuousMultilinearMap.flipAlternating.toContinuousMultilinearMap.flipMultilinear) :
+          ContinuousMultilinearMap 𝕜 (fun _ => E) F).domDomCongr σ :=
+  rfl
 
 /-- Swapping elements in `σ` with equal values in `v` results in an addition that cancels -/
 theorem uncurrySum.summand_add_swap_smul_eq_zero (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F)
@@ -197,6 +227,15 @@ def uncurrySum (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) : E [⋀^ι �
           (fun σ _ => mt <| uncurrySum.summand_eq_zero_of_smul_invariant f σ hv hij)
           (fun σ _ => Finset.mem_univ _) fun σ _ =>
           Equiv.swap_smul_involutive i j σ }
+
+theorem uncurrySum_coe (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) :
+    ((uncurrySum f).toContinuousMultilinearMap : ContinuousMultilinearMap 𝕜 (fun _ => E) F) =
+      ∑ σ : Equiv.Perm.ModSumCongr ι ι', uncurrySum.summand f σ :=
+  ContinuousMultilinearMap.ext fun _ => rfl
+
+theorem uncurrySum_apply (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) (m : ι ⊕ ι' → E) :
+    uncurrySum f m = (∑ σ : Equiv.Perm.ModSumCongr ι ι', uncurrySum.summand f σ) m :=
+  rfl
 
 def uncurryFinAdd (f : E [⋀^Fin m]→L[𝕜] E [⋀^Fin n]→L[𝕜] F) :
     E [⋀^Fin (m + n)]→L[𝕜] F :=

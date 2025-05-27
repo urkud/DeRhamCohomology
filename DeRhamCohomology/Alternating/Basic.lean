@@ -1,6 +1,7 @@
 import Mathlib.Topology.Algebra.Module.Basic
 import Mathlib.Topology.Algebra.Module.Alternating.Basic
 import Mathlib.Analysis.NormedSpace.Alternating.Basic
+import Mathlib.Analysis.NormedSpace.OperatorNorm.Mul
 
 noncomputable section
 suppress_compilation
@@ -41,6 +42,16 @@ theorem compContinuousAlternatingMap₂_apply (f : N →L[𝕜] N' →L[𝕜] N'
     f.compContinuousAlternatingMap₂ g h m m' = f (g m) (h m') :=
   rfl
 
+theorem compContinuousAlternatingMap₂_mul_apply
+    (g : M [⋀^ι]→L[𝕜] 𝕜) (h : M' [⋀^ι']→L[𝕜] 𝕜) (m : ι → M) (m': ι' → M') :
+    (ContinuousLinearMap.mul 𝕜 𝕜).compContinuousAlternatingMap₂ g h m m' = (g m) * (h m') :=
+  rfl
+
+theorem compContinuousAlternatingMap₂_lsmul_apply
+    (g : M [⋀^ι]→L[𝕜] 𝕜) (h : M' [⋀^ι']→L[𝕜] N) (m : ι → M) (m': ι' → M') :
+    (ContinuousLinearMap.lsmul 𝕜 𝕜).compContinuousAlternatingMap₂ g h m m' = (g m) • (h m') :=
+  rfl
+
 end ContinuousLinearMap
 
 namespace ContinuousMultilinearMap
@@ -67,6 +78,10 @@ def flipAlternating (f : ContinuousMultilinearMap 𝕜 (fun _ : ι ↦ M) (M' [�
       map_eq_zero_of_eq' := sorry }
     1 sorry
 
+theorem flipAlternating_apply (f : ContinuousMultilinearMap 𝕜 (fun _ : ι ↦ M) (M' [⋀^ι']→L[𝕜] N))
+    (m : ι → M) (m' : ι' → M') : flipAlternating f m' m = f m m' :=
+  rfl
+
 end ContinuousMultilinearMap
 
 namespace ContinuousAlternatingMap
@@ -84,6 +99,16 @@ def domDomCongr (σ : ι ≃ ι') (f : M [⋀^ι]→L[𝕜] N) : M [⋀^ι']→L
     map_eq_zero_of_eq' := fun v i j hv hij =>
       f.map_eq_zero_of_eq (v ∘ σ) (i := σ.symm i) (j := σ.symm j)
         (by simpa using hv) (σ.symm.injective.ne hij) }
+
+@[simp]
+theorem domDomCongr_apply (σ : ι ≃ ι') (f : M [⋀^ι]→L[𝕜] N) (v : ι' → M) :
+    (domDomCongr σ f) v = f (v ∘ σ) :=
+  rfl
+
+@[simp]
+theorem domDomCongr_refl (f : M [⋀^ι]→L[𝕜] N) :
+    domDomCongr (Equiv.refl ι) f = f :=
+  rfl
 
 variable
   {M' : Type*} [NormedAddCommGroup M'] [NormedSpace 𝕜 M']

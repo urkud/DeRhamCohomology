@@ -100,3 +100,8 @@ def flipMultilinear (f : ContinuousMultilinearMap 𝕜 (fun _ : ι ↦ M) (Conti
       map_update_add' := sorry
       map_update_smul' := sorry }
     1 sorry
+
+theorem flipMultilinear_apply (f : ContinuousMultilinearMap 𝕜 (fun _ : ι ↦ M)
+    (ContinuousMultilinearMap 𝕜 (fun _ : ι' ↦ M') N)) (m : ι → M) (m' : ι' → M') :
+    f.flipMultilinear m' m = f m m' :=
+  rfl
