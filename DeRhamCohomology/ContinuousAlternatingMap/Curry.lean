@@ -6,7 +6,7 @@ Authors: Yury Kudryashov
 import Mathlib.Analysis.NormedSpace.Alternating.Basic
 import Mathlib.Analysis.NormedSpace.Multilinear.Curry
 import Mathlib.LinearAlgebra.Alternating.DomCoprod
-import DeRhamCohomology.AlternatingMap.Curry
+import Mathlib.LinearAlgebra.Alternating.Uncurry.Fin
 import DeRhamCohomology.Alternating.Basic
 import DeRhamCohomology.Multilinear.Basic
 
@@ -23,10 +23,8 @@ variable {𝕜 E F ι ι' : Type*} [NontriviallyNormedField 𝕜]
   [Fintype ι] [Fintype ι']
   {m n : ℕ}
 
-def uncurryFin (f : E →L[𝕜] E [⋀^Fin n]→L[𝕜] F) :
-    E [⋀^Fin (n + 1)]→L[𝕜] F :=
-  AlternatingMap.mkContinuous
-    (.uncurryFin <| ContinuousAlternatingMap.toAlternatingMapLinear.comp f.toLinearMap)
+def uncurryFin (f : E →L[𝕜] E [⋀^Fin n]→L[𝕜] F) : E [⋀^Fin (n + 1)]→L[𝕜] F :=
+  AlternatingMap.mkContinuous (.uncurryFin <| toAlternatingMapLinear ∘ₗ f)
     ((n + 1) * ‖f‖) fun v ↦ calc
       _ = ‖∑ k, (-1) ^ k.val • f (v k) (k.removeNth v)‖ := by
         simp [AlternatingMap.uncurryFin_apply]
@@ -36,6 +34,10 @@ def uncurryFin (f : E →L[𝕜] E [⋀^Fin n]→L[𝕜] F) :
         exact (f (v k)).le_of_opNorm_le (f.le_opNorm _) _
       _ = _ := by
         simp [mul_assoc, ← Fin.prod_univ_succAbove (‖v ·‖)]
+
+lemma toAlternatingMap_uncurryFin (f : E →L[𝕜] E [⋀^Fin n]→L[𝕜] F) :
+    (uncurryFin f).toAlternatingMap = .uncurryFin (toAlternatingMapLinear ∘ₗ f) :=
+  rfl
 
 theorem norm_uncurryFin_le (f : E →L[𝕜] E [⋀^Fin n]→L[𝕜] F) :
     ‖uncurryFin f‖ ≤ (n + 1) * ‖f‖ :=
@@ -67,24 +69,9 @@ def uncurryFinCLM :
 
 theorem uncurryFin_uncurryFinCLM_comp_of_symmetric {f : E →L[𝕜] E →L[𝕜] E [⋀^Fin n]→L[𝕜] F}
     (hf : ∀ x y, f x y = f y x) :
-    uncurryFin (uncurryFinCLM.comp f) = 0 := by
-  ext v
-  set a : Fin (n + 2) → Fin (n + 1) → F := fun i j ↦
-    (-1) ^ (i + j : ℕ) • f (v i) (i.removeNth v j) (j.removeNth (i.removeNth v))
-  suffices ∑ ij : Fin (n + 2) × Fin (n + 1), a ij.1 ij.2 = 0 by
-    simpa [a, uncurryFin_apply, Finset.smul_sum, Fintype.sum_prod_type, mul_smul, pow_add]
-      using this
-  set g : Fin (n + 2) × Fin (n + 1) → Fin (n + 2) × Fin (n + 1) := fun (i, j) ↦
-    (i.succAbove j, j.predAbove i)
-  have hg_invol : g.Involutive := by
-    intro (i, j)
-    simp only [g, Fin.succAbove_succAbove_predAbove, Fin.predAbove_predAbove_succAbove]
-  refine Finset.sum_ninvolution g ?_ (by simp [g, Fin.succAbove_ne]) (by simp) hg_invol
-  intro (i, j)
-  simp only [a]
-  rw [hf (v i), ← Fin.removeNth_removeNth_eq_swap, Fin.removeNth_apply _ (i.succAbove j),
-    Fin.succAbove_succAbove_predAbove, Fin.neg_one_pow_succAbove_add_predAbove, pow_succ',
-    neg_one_mul, neg_smul, Fin.removeNth_apply, add_neg_cancel]
+    uncurryFin (uncurryFinCLM.comp f) = 0 :=
+  toAlternatingMap_injective <| AlternatingMap.uncurryFin_uncurryFinLM_comp_of_symmetric
+    (f := .compr₂ f.toLinearMap₂ toAlternatingMapLinear) fun x y ↦ congr(toAlternatingMap $(hf x y))
 
 /- Interior product -/
 def curryFin (f : E [⋀^Fin (n + 1)]→L[𝕜] F) : E →L[𝕜] E [⋀^Fin n]→L[𝕜] F :=
@@ -219,7 +206,6 @@ def uncurrySum (f : E [⋀^ι]→L[𝕜] E [⋀^ι']→L[𝕜] F) : E [⋀^ι �
     { ∑ σ : Equiv.Perm.ModSumCongr ι ι', uncurrySum.summand f σ with
     toFun := fun v => (⇑(∑ σ : Equiv.Perm.ModSumCongr ι ι', uncurrySum.summand f σ)) v
     map_eq_zero_of_eq' := fun v i j hv hij => by
-      dsimp only
       rw [ContinuousMultilinearMap.sum_apply]
       exact
         Finset.sum_involution (fun σ _ => Equiv.swap i j • σ)

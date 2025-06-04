@@ -1,6 +1,14 @@
-import DeRhamCohomology.AlternatingMap.Curry
+import DeRhamCohomology.Alternating.Basic
 import DeRhamCohomology.ContinuousAlternatingMap.Curry
+import DeRhamCohomology.ContinuousAlternatingMap.FDeriv
+import DeRhamCohomology.ContinuousAlternatingMap.Wedge
 import DeRhamCohomology.DifferentialForm
+import DeRhamCohomology.Equiv.Fin
 import DeRhamCohomology.Fin
+import DeRhamCohomology.Int
+import DeRhamCohomology.Manifold.DifferentialForm
+import DeRhamCohomology.Manifold.VectorBundle.Alternating
+import DeRhamCohomology.Multilinear.Basic
 import DeRhamCohomology.MultilinearMap.Fin
 import DeRhamCohomology.Perm
+import DeRhamCohomology.VectorBundle.Alternating
